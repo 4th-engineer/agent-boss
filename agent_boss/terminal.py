@@ -162,7 +162,9 @@ class TerminalWidget(QWidget):
                 codes = part[2:-1].split(";") if part[2:-1] else ["0"]
                 for code in codes:
                     if code == "0":
+                        # Reset both foreground and background to default
                         current_format = QTextCharFormat(default_format)
+                        current_format.setBackground(default_format.background())
                     elif code == "1":
                         # Bold/bright - use lighter foreground color
                         fg = current_format.foreground().color()

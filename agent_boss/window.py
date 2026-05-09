@@ -62,8 +62,11 @@ class MainWindow(QMainWindow):
 
     def _restore_sessions(self):
         sessions = get_all_sessions()
-        for _ in sessions:
-            self._tab_manager.create_tab()
+        for session in sessions:
+            tab_id = session["tab_id"]
+            title = session["tab_title"]
+            working_dir = session["working_dir"]
+            self._tab_manager.create_tab(title=title, working_dir=working_dir)
 
     def _on_claude(self):
         self._tab_manager.run_command_in_current("claude --acp\n")
