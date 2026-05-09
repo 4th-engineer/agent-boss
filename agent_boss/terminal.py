@@ -194,4 +194,6 @@ class TerminalWidget(QWidget):
     def cleanup(self):
         if hasattr(self, "_reader"):
             self._reader.stop()
-            self._reader.wait(1000)
+            self._reader.wait(500)
+            self._reader.deleteLater()
+            del self._reader

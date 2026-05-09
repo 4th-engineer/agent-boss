@@ -33,8 +33,8 @@ class TabManager(QTabWidget):
             return None
 
         tab_id = create_session(title=title, working_dir=working_dir)
-        self._process_manager.remove_process(title)
-        self._process_manager._processes[tab_id] = process
+        # Re-key process from temporary title to actual tab_id (no close needed)
+        self._process_manager._processes[tab_id] = self._process_manager._processes.pop(title)
 
         terminal = TerminalWidget(process, self)
         index = self.addTab(terminal, title)

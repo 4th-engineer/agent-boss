@@ -148,8 +148,8 @@ class MapWidget(QWidget):
         layout.addWidget(self._map_view)
 
         # Connect signals
-        self._map_view.room_clicked.connect(self.room_selected.emit)
-        self._map_view.agent_clicked.connect(self.agent_selected.emit)
+        self._map_view.room_clicked.connect(self.room_selected)
+        self._map_view.agent_clicked.connect(self.agent_selected)
 
     def set_room_manager(self, room_manager):
         """Set the room manager and populate map."""

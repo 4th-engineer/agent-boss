@@ -84,10 +84,11 @@ class RoomManager:
         if room_id == "main":
             return False
         if room_id in self._rooms:
-            # Move agents to main
+            # Move agents to main (avoid duplicates)
             for agent_id in self._rooms[room_id].members:
-                self._agents[agent_id] = "main"
-            self._rooms["main"].members.extend(self._rooms[room_id].members)
+                if agent_id not in self._rooms["main"].members:
+                    self._rooms["main"].members.append(agent_id)
+                    self._agents[agent_id] = "main"
             del self._rooms[room_id]
             self._save_rooms()
             return True

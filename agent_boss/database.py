@@ -1,5 +1,6 @@
 """SQLite database for session persistence."""
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Optional
 import uuid
@@ -7,11 +8,21 @@ import uuid
 
 DB_PATH = Path(__file__).parent.parent / "agentboss.db"
 
+# Thread-local storage for connections
+_thread_local = threading.local()
+
 
 def get_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Get a database connection for the current thread.
+
+    Note: Uses check_same_thread=False for Qt compatibility.
+    In production, consider using a connection pool or Qt's
+    QSqlDatabase for proper thread safety.
+    """
+    if not hasattr(_thread_local, 'conn') or _thread_local.conn is None:
+        _thread_local.conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+        _thread_local.conn.row_factory = sqlite3.Row
+    return _thread_local.conn
 
 
 def init_db():

@@ -104,7 +104,7 @@ class AvatarOverlay(QWidget):
             '▒': self._colors.get('accent', '#FFFF00'),
             '▓': self._colors.get('primary', '#FFFFFF'),
             '◐': self._colors.get('accent', '#4CAF50'),
-            '◐'.replace('◐', '◑'): self._colors.get('accent', '#4CAF50'),
+            '◑': self._colors.get('accent', '#4CAF50'),
             '▀': self._colors.get('primary', '#FFFFFF'),
             '▄': self._colors.get('secondary', '#888888'),
         }

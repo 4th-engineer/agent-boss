@@ -17,7 +17,6 @@ class Toolbar(QToolBar):
         super().__init__(parent)
         self.setMovable(False)
         self.setFixedHeight(40)
-        self._avatar_visible = False
         self._colors = {
             "toolbar": "#252526",
             "button": "#3C3C3C",
@@ -56,7 +55,7 @@ class Toolbar(QToolBar):
         self.addSeparator()
 
         self._btn_avatar = QPushButton("👾 Avatar")
-        self._btn_avatar.clicked.connect(self._on_avatar_toggle)
+        self._btn_avatar.clicked.connect(self.avatar_toggled.emit)
         self.addWidget(self._btn_avatar)
 
         self._btn_new = QPushButton("📁 New")
@@ -70,7 +69,3 @@ class Toolbar(QToolBar):
         self._btn_settings = QPushButton("⚙️")
         self._btn_settings.clicked.connect(self.settings_clicked.emit)
         self.addWidget(self._btn_settings)
-
-    def _on_avatar_toggle(self):
-        self._avatar_visible = not self._avatar_visible
-        self.avatar_toggled.emit()
