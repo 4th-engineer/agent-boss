@@ -186,6 +186,16 @@ class TerminalWidget(QWidget):
                     elif code == "95": current_format.setForeground(QColor("#D397EE"))
                     elif code == "96": current_format.setForeground(QColor("#8BD9CA"))
                     elif code == "97": current_format.setForeground(QColor("#FFFFFF"))
+                    # Background colors (40-49)
+                    elif code == "40": current_format.setBackground(QColor("#000000"))
+                    elif code == "41": current_format.setBackground(QColor("#CC0000"))
+                    elif code == "42": current_format.setBackground(QColor("#4E9A06"))
+                    elif code == "43": current_format.setBackground(QColor("#C4A000"))
+                    elif code == "44": current_format.setBackground(QColor("#3465A4"))
+                    elif code == "45": current_format.setBackground(QColor("#75517B"))
+                    elif code == "46": current_format.setBackground(QColor("#06989A"))
+                    elif code == "47": current_format.setBackground(QColor("#FFFFFF"))
+                    elif code == "49": current_format.setBackground(QColor("#1E1E1E"))
             else:
                 if part and part.strip():
                     cursor.setCharFormat(current_format)
@@ -222,7 +232,13 @@ class TerminalWidget(QWidget):
                 return True
             elif event.text():
                 char = event.text()
-                if len(char) == 1 and 32 <= ord(char) < 127:
+                # Forward printable characters and common control sequences
+                # Only block internal Qt sequences, let terminals handle Unicode
+                if char and not char.iscntrl():
+                    self._process.write(char)
+                    return True
+                # Allow common control chars that terminals need
+                if char in ('\x01', '\x02', '\x05', '\x06'):
                     self._process.write(char)
                     return True
         return super().eventFilter(obj, event)
@@ -234,9 +250,10 @@ class TerminalWidget(QWidget):
     def cleanup(self):
         if hasattr(self, "_reader"):
             self._reader.stop()
-            if not self._reader.wait(1000):
+            if not self._reader.wait(1500):
                 self._reader.terminate()
                 # Ensure thread terminates after forceful termination
-                self._reader.wait(500)
+                if not self._reader.wait(500):
+                    print("Warning: PtyReader thread did not terminate cleanly")
             self._reader.deleteLater()
             del self._reader
