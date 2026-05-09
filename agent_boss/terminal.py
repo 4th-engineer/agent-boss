@@ -185,10 +185,10 @@ class TerminalWidget(QWidget):
             elif key == Qt.Key_Tab:
                 self._process.write("\t")
                 return True
-            elif key == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
+            elif key == Qt.Key_C and event.modifiers() & Qt.ControlModifier:
                 self._process.write("\x03")
                 return True
-            elif key == Qt.Key_V and event.modifiers() == Qt.ControlModifier:
+            elif key == Qt.Key_V and event.modifiers() & Qt.ControlModifier:
                 # Handle paste - get clipboard and write to terminal
                 clipboard = QApplication.clipboard()
                 if clipboard:
