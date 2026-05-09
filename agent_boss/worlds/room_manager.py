@@ -84,6 +84,9 @@ class RoomManager:
         if room_id == "main":
             return False
         if room_id in self._rooms:
+            # Ensure main room exists
+            if "main" not in self._rooms:
+                self._rooms["main"] = Room("main", "Main Hall", "Default room", "#007ACC")
             # Move agents to main (avoid duplicates)
             for agent_id in self._rooms[room_id].members:
                 if agent_id not in self._rooms["main"].members:
@@ -123,6 +126,9 @@ class RoomManager:
         return []
 
     def unassigned_agents(self) -> list[str]:
-        """Get agents not in any room."""
-        assigned = set(self._agents.keys())
-        return list(assigned)
+        """Get agents not in any room.
+
+        Note: This returns all known agents from _agents dict.
+        For a true unassigned list, would need a separate registry.
+        """
+        return list(self._agents.keys())

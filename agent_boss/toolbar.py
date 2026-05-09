@@ -37,7 +37,7 @@ class Toolbar(QToolBar):
         """Update toolbar colors from theme."""
         self._colors = {
             "toolbar": colors.get("toolbar", "#252526"),
-            "button": colors.get("toolbar", "#3C3C3C"),
+            "button": colors.get("button", "#3C3C3C"),
             "fg": colors.get("fg", "#D4D4D4"),
             "button_hover": colors.get("button_hover", "#505050")
         }

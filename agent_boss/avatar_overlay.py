@@ -35,6 +35,7 @@ class AvatarOverlay(QWidget):
             with open(path) as f:
                 data = json.load(f)
                 if avatar_id in data:
+                    self._avatar_id = avatar_id
                     self._avatar_data = data[avatar_id]
                     self._sprite = self._avatar_data.get("sprite", [])
                     self._colors = self._avatar_data.get("colors", {})
@@ -42,8 +43,9 @@ class AvatarOverlay(QWidget):
         except Exception as e:
             print(f"Failed to load avatar {avatar_id}: {e}")
 
-        # Fallback to beaver
-        self._avatar_id = DEFAULT_AVATAR
+        # Fallback to default avatar
+        if avatar_id != DEFAULT_AVATAR:
+            self._load_avatar(DEFAULT_AVATAR)
 
     def set_avatar(self, avatar_id: str):
         """Change to a different avatar."""
@@ -112,9 +114,10 @@ class AvatarOverlay(QWidget):
 
     def reposition(self, parent_rect):
         """Reposition to bottom-right of parent."""
+        # Use parent dimensions for relative positioning
         self.move(
-            parent_rect.right() + self._offset_x - self.width(),
-            parent_rect.bottom() + self._offset_y - self.height()
+            parent_rect.width() + self._offset_x - self.width(),
+            parent_rect.height() + self._offset_y - self.height()
         )
 
 

@@ -3,7 +3,7 @@ import re
 import sys
 import select as selector
 from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout
-from PySide6.QtCore import QThread, Signal
+from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
 
 from agent_boss.process_manager import PtyProcess
@@ -168,16 +168,17 @@ class TerminalWidget(QWidget):
     def eventFilter(self, obj, event):
         """Handle key events for terminal input."""
         if obj == self._text_edit and isinstance(event, QKeyEvent):
-            if event.key() == 0x100:  # Return
+            key = event.key()
+            if key == Qt.Key_Return:
                 self._process.write("\n")
                 return True
-            elif event.key() == 0x103:  # Backtab
-                self._process.write("\t")
-                return True
-            elif event.key() == 0x7F:  # Backspace
+            elif key == Qt.Key_Backspace:
                 self._process.write("\x7f")
                 return True
-            elif event.key() == 0x43 and event.modifiers() == 0x140000:  # Ctrl+C
+            elif key == Qt.Key_Tab:
+                self._process.write("\t")
+                return True
+            elif key == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
                 self._process.write("\x03")
                 return True
             elif event.text():
