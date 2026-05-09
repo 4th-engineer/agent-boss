@@ -90,6 +90,11 @@ class PtyProcess:
             except (OSError, ProcessLookupError) as e:
                 # Process may have already exited; not an error
                 print(f"PtyProcess close info (pid): {e}")
+            # Reap zombie process to prevent resource leaks
+            try:
+                os.waitpid(self._pid, os.WNOHANG)
+            except (OSError, ChildProcessError):
+                pass
             self._pid = None
 
 

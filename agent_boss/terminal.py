@@ -188,6 +188,9 @@ class TerminalWidget(QWidget):
             elif key == Qt.Key_Tab:
                 self._process.write("\t")
                 return True
+            elif key == Qt.Key_Delete:
+                self._process.write("\x1b[3~")
+                return True
             elif key == Qt.Key_C and event.modifiers() & Qt.ControlModifier:
                 self._process.write("\x03")
                 return True
