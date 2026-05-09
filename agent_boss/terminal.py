@@ -37,7 +37,8 @@ class PtyReader(QThread):
                             with self._lock:
                                 if self._process is None or self._process.is_closed:
                                     break
-                            data = self._process.read()
+                                proc = self._process
+                            data = proc.read()
                             if data:
                                 self.output_ready.emit(data)
                         # Check if process closed during select
@@ -49,7 +50,11 @@ class PtyReader(QThread):
                         print(f"PtyReader select error: {e}")
                         break
             else:
-                data = self._process.read()
+                with self._lock:
+                    if self._process is None or self._process.is_closed:
+                        break
+                    proc = self._process
+                data = proc.read()
                 if data:
                     self.output_ready.emit(data)
                 QThread.msleep(50)

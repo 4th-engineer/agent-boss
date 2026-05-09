@@ -65,12 +65,17 @@ def update_session(tab_id: str, title: Optional[str] = None, working_dir: Option
     if title is None and working_dir is None:
         return
     with get_connection() as conn:
-        if title is not None:
+        if title is not None and working_dir is not None:
+            conn.execute(
+                "UPDATE sessions SET tab_title = ?, working_dir = ?, last_active_at = CURRENT_TIMESTAMP WHERE tab_id = ?",
+                (title, working_dir, tab_id),
+            )
+        elif title is not None:
             conn.execute(
                 "UPDATE sessions SET tab_title = ?, last_active_at = CURRENT_TIMESTAMP WHERE tab_id = ?",
                 (title, tab_id),
             )
-        if working_dir is not None:
+        else:
             conn.execute(
                 "UPDATE sessions SET working_dir = ?, last_active_at = CURRENT_TIMESTAMP WHERE tab_id = ?",
                 (working_dir, tab_id),
