@@ -2,7 +2,7 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QScrollArea, QGraphicsView, QGraphicsScene,
-    QGraphicsRectItem, QGraphicsTextItem, QGraphicsItem, QMenu
+    QGraphicsRectItem, QGraphicsTextItem, QGraphicsItem
 )
 from PySide6.QtCore import Qt, Signal, QRectF
 from PySide6.QtGui import QBrush, QColor, QPen, QFont, QPainter

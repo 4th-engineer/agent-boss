@@ -2,7 +2,6 @@
 import os
 import sys
 import fcntl
-import struct
 import termios
 from typing import Optional
 
