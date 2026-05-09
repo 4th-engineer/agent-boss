@@ -31,7 +31,7 @@ class PtyReader(QThread):
                             data = self._process.read()
                             if data:
                                 self.output_ready.emit(data)
-                    except (OSError, ValueError):
+                    except (OSError, ValueError, TimeoutError):
                         pass
                 else:
                     data = self._process.read()
