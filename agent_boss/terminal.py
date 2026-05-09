@@ -35,8 +35,9 @@ class PtyReader(QThread):
                         # Check if process closed during select
                         if self._process.is_closed:
                             break
-                    except (OSError, ValueError, RuntimeError):
+                    except (OSError, ValueError, RuntimeError) as e:
                         # Unexpected error in selector - process may have closed
+                        print(f"PtyReader select error: {e}")
                         break
             else:
                 data = self._process.read()
@@ -118,6 +119,10 @@ class TerminalWidget(QWidget):
     def get_avatar_id(self) -> str:
         """Get current avatar ID."""
         return self._avatar_id
+
+    def is_avatar_visible(self) -> bool:
+        """Check if avatar overlay is visible."""
+        return self._avatar.isVisible()
 
     def _start_reader(self):
         self._reader = PtyReader(self._process)

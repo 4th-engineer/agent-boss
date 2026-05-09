@@ -94,9 +94,9 @@ class MapView(QGraphicsView):
         room_rect = room_item.rect()
 
         # Position within room
-        count = len([a for a in self._agent_rooms.values() if a == room_id])
+        member_count = len([a for a in self._agent_rooms.values() if a == room_id])
         agent = AgentNode(agent_id, avatar)
-        agent.setRect(room_rect.x() + 20 + (count % 3) * 40, room_rect.y() + 30 + (count // 3) * 40, 35, 35)
+        agent.setRect(room_rect.x() + 20 + (member_count % 3) * 40, room_rect.y() + 30 + (member_count // 3) * 40, 35, 35)
         self._scene.addItem(agent)
         self._agent_items[agent_id] = agent
         self._agent_rooms[agent_id] = room_id
