@@ -3,6 +3,7 @@ import os
 import sys
 import fcntl
 import termios
+import struct
 from typing import Optional
 
 
@@ -134,7 +135,6 @@ class ProcessManager:
                 os.execvp(shell, [shell])
             except Exception:
                 os._exit(1)
-            os._exit(1)
 
         # Parent process
         try:
