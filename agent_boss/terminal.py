@@ -198,7 +198,7 @@ class TerminalWidget(QWidget):
                 return True
             elif event.text():
                 char = event.text()
-                if ord(char) >= 32:
+                if len(char) == 1 and 32 <= ord(char) < 127:
                     self._process.write(char)
                 return True
         return super().eventFilter(obj, event)

@@ -1,6 +1,7 @@
 """Cross-platform PTY process manager."""
 import os
 import sys
+import signal
 import fcntl
 import termios
 import struct
@@ -85,7 +86,7 @@ class PtyProcess:
             self._master_fd = None
         if self._pid is not None:
             try:
-                os.kill(self._pid, 9)
+                os.kill(self._pid, signal.SIGKILL)
             except OSError as e:
                 print(f"PtyProcess close error (kill pid): {e}")
             self._pid = None
