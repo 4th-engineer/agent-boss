@@ -6,11 +6,6 @@ import struct
 import termios
 from typing import Optional
 
-# Platform detection
-IS_WINDOWS = sys.platform == "win32"
-IS_LINUX = sys.platform.startswith("linux")
-IS_MACOS = sys.platform == "darwin"
-
 
 class PtyProcess:
     """Cross-platform PTY process wrapper."""
@@ -30,7 +25,6 @@ class PtyProcess:
     def write(self, data: str):
         if self._closed:
             return
-        
         if self._winpty_process:
             try:
                 self._winpty_process.write(data)
@@ -45,7 +39,6 @@ class PtyProcess:
     def read(self) -> str:
         if self._closed:
             return ""
-
         if self._winpty_process:
             try:
                 return self._winpty_process.read()
@@ -100,23 +93,16 @@ class ProcessManager:
         self._winpty = None
 
     def _init_winpty(self):
-        """Lazy init winpty on Windows."""
-        if IS_WINDOWS and self._winpty is None:
+        if sys.platform == "win32" and self._winpty is None:
             try:
                 import winpty
                 self._winpty = winpty
             except ImportError:
                 print("winpty not installed, Windows PTY not available")
 
-    def create_process(
-        self,
-        tab_id: str,
-        rows: int = 24,
-        cols: int = 80,
-    ) -> Optional[PtyProcess]:
-        """Create a new PTY process running shell."""
+    def create_process(self, tab_id: str, rows: int = 24, cols: int = 80):
         try:
-            if IS_WINDOWS:
+            if sys.platform == "win32":
                 return self._create_windows_process(tab_id, rows, cols)
             else:
                 return self._create_unix_process(tab_id, rows, cols)
@@ -124,16 +110,12 @@ class ProcessManager:
             print(f"Failed to create PTY process: {e}")
             return None
 
-    def _create_unix_process(self, tab_id: str, rows: int, cols: int) -> Optional[PtyProcess]:
-        """Create PTY process on Linux/macOS."""
+    def _create_unix_process(self, tab_id: str, rows: int, cols: int):
         import pty
-        import select as selector
-
         master_fd, slave_fd = pty.openpty()
         pid = os.fork()
 
         if pid == 0:
-            # Child
             os.close(master_fd)
             os.setsid()
             fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
@@ -145,7 +127,6 @@ class ProcessManager:
             shell = os.environ.get("SHELL", "/bin/bash")
             os.execvp(shell, [shell])
 
-        # Parent
         os.close(slave_fd)
         flags = fcntl.fcntl(master_fd, fcntl.F_GETFL)
         fcntl.fcntl(master_fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
@@ -155,8 +136,7 @@ class ProcessManager:
         self._processes[tab_id] = process
         return process
 
-    def _create_windows_process(self, tab_id: str, rows: int, cols: int) -> Optional[PtyProcess]:
-        """Create PTY process on Windows using winpty."""
+    def _create_windows_process(self, tab_id: str, rows: int, cols: int):
         self._init_winpty()
         if self._winpty is None:
             return None
@@ -171,7 +151,7 @@ class ProcessManager:
             print(f"Failed to create winpty process: {e}")
             return None
 
-    def get_process(self, tab_id: str) -> Optional[PtyProcess]:
+    def get_process(self, tab_id: str):
         return self._processes.get(tab_id)
 
     def remove_process(self, tab_id: str):

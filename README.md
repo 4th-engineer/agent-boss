@@ -1,40 +1,38 @@
 # Agent Boss
 
-Windows 终端管理器，为 PowerShell 套上外壳，提供多标签页、快捷启动 agent。
+Multi-tab terminal manager for AI agents. Run `claude`, `hermes`, or any CLI agent in separate tabs with a clean GUI.
 
-## 安装
-
-```bash
-pip install -r requirements.txt
-```
-
-## 运行
+## Install
 
 ```bash
-python -m src.main
+pip install -e .
 ```
 
-## 功能
+Windows users also need:
+```bash
+pip install winpty
+```
 
-- 多标签 PowerShell 终端
-- 快捷启动 Claude / Hermes
-- 会话持久化（SQLite）
-- 键盘快捷键
+## Run
 
-## 快捷键
+```bash
+boss run
+```
 
-| 快捷键 | 功能 |
-|--------|------|
-| Ctrl+T | 新建标签 |
-| Ctrl+W | 关闭标签 |
+Or directly:
+```bash
+python -m agent_boss
+```
 
-## 依赖
+## Shortcuts
 
-- PySide6 >= 6.6.0
-- pywinpty >= 2.0.0
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+T | New tab |
+| Ctrl+W | Close tab |
 
-## Phase 2 计划
+## Buttons
 
-- 像素角色 avatar 系统
-- 地图视图
-- agent 任务状态可视化
+- **🤖 Claude** - Start `claude --acp` in current tab
+- **🧙 Hermes** - Start `hermes` in current tab
+- **📁 New** - Create new terminal tab

@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+agent_boss/__init__.py
+agent_boss/__main__.py
+agent_boss/database.py
+agent_boss/main.py
+agent_boss/process_manager.py
+agent_boss/tabs.py
+agent_boss/terminal.py
+agent_boss/toolbar.py
+agent_boss/window.py
+agent_boss.egg-info/PKG-INFO
+agent_boss.egg-info/SOURCES.txt
+agent_boss.egg-info/dependency_links.txt
+agent_boss.egg-info/entry_points.txt
+agent_boss.egg-info/requires.txt
+agent_boss.egg-info/top_level.txt

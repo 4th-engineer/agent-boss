@@ -1,7 +1,6 @@
 """SQLite database for session persistence."""
 import sqlite3
 from pathlib import Path
-from contextlib import contextmanager
 from typing import Optional
 import uuid
 
@@ -27,7 +26,6 @@ def init_db():
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 last_active_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
-
             CREATE TABLE IF NOT EXISTS settings (
                 key TEXT PRIMARY KEY,
                 value TEXT
@@ -36,7 +34,6 @@ def init_db():
 
 
 def create_session(title: str = "PowerShell", working_dir: Optional[str] = None) -> str:
-    """Create a new session record. Returns tab_id."""
     tab_id = str(uuid.uuid4())
     with get_connection() as conn:
         conn.execute(
@@ -47,7 +44,6 @@ def create_session(title: str = "PowerShell", working_dir: Optional[str] = None)
 
 
 def update_session(tab_id: str, title: Optional[str] = None, working_dir: Optional[str] = None):
-    """Update session title or working_dir."""
     with get_connection() as conn:
         if title is not None:
             conn.execute(
@@ -62,13 +58,11 @@ def update_session(tab_id: str, title: Optional[str] = None, working_dir: Option
 
 
 def remove_session(tab_id: str):
-    """Delete a session record."""
     with get_connection() as conn:
         conn.execute("DELETE FROM sessions WHERE tab_id = ?", (tab_id,))
 
 
-def get_all_sessions() -> list[sqlite3.Row]:
-    """Get all sessions ordered by last_active_at."""
+def get_all_sessions() -> list:
     with get_connection() as conn:
         return conn.execute(
             "SELECT * FROM sessions ORDER BY last_active_at DESC"

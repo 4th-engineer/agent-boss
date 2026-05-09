@@ -1,0 +1,2 @@
+[console_scripts]
+boss = agent_boss.__main__:main

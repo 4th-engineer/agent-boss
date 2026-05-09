@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-boss"
+version = "0.1.0"
+description = "Multi-tab terminal manager for AI agents"
+requires-python = ">=3.10"
+dependencies = ["PySide6>=6.6.0"]
+
+[project.optional-dependencies]
+windows = ["winpty>=2.0.0"]
+
+[project.scripts]
+boss = "agent_boss.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agent_boss*"]
