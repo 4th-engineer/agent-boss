@@ -148,8 +148,12 @@ class TerminalWidget(QWidget):
                     if code == "0":
                         current_format = QTextCharFormat(default_format)
                     elif code == "1":
+                        # Bold/bright - use lighter foreground color
                         fg = current_format.foreground().color()
                         current_format.setForeground(fg.lighter(150))
+                    elif code == "22":
+                        # Normal weight - reset to default foreground
+                        current_format.setForeground(default_format.foreground())
                     elif code == "30": current_format.setForeground(QColor("#000000"))
                     elif code == "31": current_format.setForeground(QColor("#CC0000"))
                     elif code == "32": current_format.setForeground(QColor("#4E9A06"))

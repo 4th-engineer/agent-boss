@@ -31,8 +31,8 @@ class ThemeManager:
         return user_dir if user_dir.exists() else bundled_dir
 
     def _load_themes(self):
-        """Load all theme JSON files."""
-        themes_dir = Path(__file__).parent / "themes"
+        """Load all theme JSON files from themes directory."""
+        themes_dir = self._themes_dir
         if themes_dir.exists():
             for file in themes_dir.glob("*.json"):
                 try:
@@ -42,18 +42,6 @@ class ThemeManager:
                         self._themes[name] = theme
                 except Exception as e:
                     print(f"Failed to load theme {file}: {e}")
-
-        # Also load user themes
-        user_dir = Path.home() / ".agentboss" / "themes"
-        if user_dir.exists():
-            for file in user_dir.glob("*.json"):
-                try:
-                    with open(file) as f:
-                        theme = json.load(f)
-                        name = file.stem
-                        self._themes[name] = theme
-                except Exception as e:
-                    print(f"Failed to load user theme {file}: {e}")
 
     def list_themes(self) -> list[str]:
         """Return list of available theme names."""
