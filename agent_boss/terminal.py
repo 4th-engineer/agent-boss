@@ -22,26 +22,26 @@ class PtyReader(QThread):
 
     def run(self):
         self._running = True
-        while self._running:
-            if self._process and not self._process.is_closed:
-                if sys.platform in ("linux", "darwin"):
+        while self._running and self._process and not self._process.is_closed:
+            if sys.platform in ("linux", "darwin"):
+                master_fd = self._process.master_fd
+                if master_fd is not None:
                     try:
-                        master_fd = self._process.master_fd
-                        if master_fd is not None:
-                            ready, _, _ = selector.select([master_fd], [], [], 0.05)
-                            if ready:
-                                data = self._process.read()
-                                if data:
-                                    self.output_ready.emit(data)
-                    except (OSError, ValueError):
+                        ready, _, _ = selector.select([master_fd], [], [], 0.05)
+                        if ready:
+                            data = self._process.read()
+                            if data:
+                                self.output_ready.emit(data)
+                        # Check if process closed during select
+                        if self._process.is_closed:
+                            break
+                    except (OSError, ValueError, RuntimeError):
                         # Unexpected error in selector - process may have closed
-                        pass
-                else:
-                    data = self._process.read()
-                    if data:
-                        self.output_ready.emit(data)
-                    QThread.msleep(50)
+                        break
             else:
+                data = self._process.read()
+                if data:
+                    self.output_ready.emit(data)
                 QThread.msleep(50)
 
     def stop(self):
