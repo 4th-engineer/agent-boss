@@ -24,9 +24,9 @@ class PtyReader(QThread):
         self._running = True
         while self._running:
             if self._process and not self._process.is_closed:
-                if sys.platform == "linux" or sys.platform == "darwin":
+                if sys.platform in ("linux", "darwin"):
                     try:
-                        ready, _, _ = selector.select([self._process._fd], [], [], 0.05)
+                        ready, _, _ = selector.select([self._process._master_fd], [], [], 0.05)
                         if ready:
                             data = self._process.read()
                             if data:

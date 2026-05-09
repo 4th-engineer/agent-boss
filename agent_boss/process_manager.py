@@ -122,8 +122,7 @@ class ProcessManager:
             os.dup2(slave_fd, 0)
             os.dup2(slave_fd, 1)
             os.dup2(slave_fd, 2)
-            if slave_fd > 2:
-                os.close(slave_fd)
+            os.close(slave_fd)
             shell = os.environ.get("SHELL", "/bin/bash")
             os.execvp(shell, [shell])
 

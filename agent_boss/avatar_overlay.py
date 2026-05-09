@@ -128,5 +128,5 @@ def list_avatars() -> list[dict]:
         with open(path) as f:
             data = json.load(f)
             return [{"id": k, **v} for k, v in data.items()]
-    except:
+    except (json.JSONDecodeError, OSError):
         return []
