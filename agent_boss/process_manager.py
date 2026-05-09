@@ -25,7 +25,7 @@ class PtyProcess:
     def is_closed(self) -> bool:
         """Check if process has been closed."""
         if self._winpty_process:
-            return False
+            return self._closed
         return self._closed
 
     def write(self, data: str):
