@@ -51,7 +51,10 @@ class TabManager(QTabWidget):
 
     def get_current_tab_id(self):
         widget = self.widget(self.currentIndex())
-        return next((tid for tid, w in self._tab_widgets.items() if w == widget), None)
+        for tid, w in self._tab_widgets.items():
+            if w == widget:
+                return tid
+        return None
 
     def _on_tab_close(self, index):
         widget = self.widget(index)

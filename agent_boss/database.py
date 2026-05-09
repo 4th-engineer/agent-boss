@@ -44,6 +44,11 @@ def init_db():
                 value TEXT
             );
         """)
+        # Verify schema after creation
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = {row[0] for row in cursor}
+        if "sessions" not in tables or "settings" not in tables:
+            raise RuntimeError("Database schema initialization failed")
 
 
 def create_session(title: str = "PowerShell", working_dir: Optional[str] = None) -> str:

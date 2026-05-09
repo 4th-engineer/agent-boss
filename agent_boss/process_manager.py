@@ -130,15 +130,20 @@ class ProcessManager:
 
         if pid == 0:
             # Child process
-            os.close(master_fd)
-            os.setsid()
-            fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
-            os.dup2(slave_fd, 0)
-            os.dup2(slave_fd, 1)
-            os.dup2(slave_fd, 2)
-            os.close(slave_fd)
-            shell = os.environ.get("SHELL", "/bin/bash")
-            os.execvp(shell, [shell])
+            try:
+                os.close(master_fd)
+                os.setsid()
+                fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
+                os.dup2(slave_fd, 0)
+                os.dup2(slave_fd, 1)
+                os.dup2(slave_fd, 2)
+                os.close(slave_fd)
+                shell = os.environ.get("SHELL", "/bin/bash")
+                os.execvp(shell, [shell])
+            except Exception:
+                os._exit(1)
+            # Should not reach here, but just in case
+            os._exit(1)
 
         # Parent process
         os.close(slave_fd)
