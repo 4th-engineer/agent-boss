@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         terminal = self._tab_manager.get_current_terminal()
         if terminal:
             terminal.toggle_avatar()
-            visible = terminal._avatar.isVisible() if hasattr(terminal, '_avatar') else False
+            visible = terminal._avatar.isVisible() if hasattr(terminal, '_avatar') else False  # noqa: F821
             self._status_bar.showMessage(f"Avatar: {'ON' if visible else 'OFF'}")
 
     def _on_settings(self):

@@ -75,7 +75,7 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 self._winpty_process.kill()
-            except Exception as e:
+            except OSError as e:
                 print(f"PtyProcess close error (winpty): {e}")
             self._winpty_process = None
         if self._master_fd is not None:
@@ -87,8 +87,9 @@ class PtyProcess:
         if self._pid is not None:
             try:
                 os.kill(self._pid, signal.SIGKILL)
-            except OSError as e:
-                print(f"PtyProcess close error (kill pid): {e}")
+            except (OSError, ProcessLookupError) as e:
+                # Process may have already exited; not an error
+                print(f"PtyProcess close info (pid): {e}")
             self._pid = None
 
 
