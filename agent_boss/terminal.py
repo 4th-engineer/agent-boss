@@ -3,7 +3,7 @@ import re
 import sys
 import select as selector
 from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtCore import Qt, QThread, Signal, Property
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
 
 from agent_boss.process_manager import PtyProcess
@@ -26,11 +26,13 @@ class PtyReader(QThread):
             if self._process and not self._process.is_closed:
                 if sys.platform in ("linux", "darwin"):
                     try:
-                        ready, _, _ = selector.select([self._process._master_fd], [], [], 0.05)
-                        if ready:
-                            data = self._process.read()
-                            if data:
-                                self.output_ready.emit(data)
+                        master_fd = self._process.master_fd
+                        if master_fd is not None:
+                            ready, _, _ = selector.select([master_fd], [], [], 0.05)
+                            if ready:
+                                data = self._process.read()
+                                if data:
+                                    self.output_ready.emit(data)
                     except (OSError, ValueError):
                         # Unexpected error in selector - log and continue
                         import traceback

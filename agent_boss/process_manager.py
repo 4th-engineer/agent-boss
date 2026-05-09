@@ -17,7 +17,13 @@ class PtyProcess:
         self._closed = False
 
     @property
+    def master_fd(self) -> Optional[int]:
+        """Expose master_fd for PtyReader (read-only access)."""
+        return self._master_fd
+
+    @property
     def is_closed(self) -> bool:
+        """Check if process has been closed."""
         if self._winpty_process:
             return False
         return self._closed

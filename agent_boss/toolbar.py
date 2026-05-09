@@ -45,21 +45,21 @@ class Toolbar(QToolBar):
 
     def _setup_actions(self):
         self._btn_claude = QPushButton("🤖 Claude")
-        self._btn_claude.clicked.connect(self.claude_clicked.emit)
+        self._btn_claude.clicked.connect(lambda: self.claude_clicked.emit())
         self.addWidget(self._btn_claude)
 
         self._btn_hermes = QPushButton("🧙 Hermes")
-        self._btn_hermes.clicked.connect(self.hermes_clicked.emit)
+        self._btn_hermes.clicked.connect(lambda: self.hermes_clicked.emit())
         self.addWidget(self._btn_hermes)
 
         self.addSeparator()
 
         self._btn_avatar = QPushButton("👾 Avatar")
-        self._btn_avatar.clicked.connect(self.avatar_toggled.emit)
+        self._btn_avatar.clicked.connect(lambda: self.avatar_toggled.emit())
         self.addWidget(self._btn_avatar)
 
         self._btn_new = QPushButton("📁 New")
-        self._btn_new.clicked.connect(self.new_tab_clicked.emit)
+        self._btn_new.clicked.connect(lambda: self.new_tab_clicked.emit())
         self.addWidget(self._btn_new)
 
         spacer = QWidget()
@@ -67,5 +67,5 @@ class Toolbar(QToolBar):
         self.addWidget(spacer)
 
         self._btn_settings = QPushButton("⚙️")
-        self._btn_settings.clicked.connect(self.settings_clicked.emit)
+        self._btn_settings.clicked.connect(lambda: self.settings_clicked.emit())
         self.addWidget(self._btn_settings)
