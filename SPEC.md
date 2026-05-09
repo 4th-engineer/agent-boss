@@ -137,19 +137,80 @@ pywinpty>=2.0.0
 
 ---
 
+## 主题系统
+
+### 概述
+可选的主题系统，用户可通过 JSON 文件自定义界面颜色。内置 3 个主题，支持用户扩展。
+
+### 内置主题
+| 主题 | 描述 | 风格 |
+|------|------|------|
+| `default` | VSCode 深色 | 经典暗色 |
+| `hacker` | 黑客绿 | 终端复古 |
+| `ocean` | 海洋蓝 | 冷静蓝调 |
+
+### 主题 JSON 格式
+```json
+{
+  "name": "Theme Name",
+  "description": "Description",
+  "colors": {
+    "bg": "#HEXCODE",
+    "fg": "#HEXCODE",
+    "tab_active": "#HEXCODE",
+    "tab_inactive": "#HEXCODE",
+    "toolbar": "#HEXCODE",
+    "button_hover": "#HEXCODE",
+    "statusbar": "#HEXCODE",
+    "accent": "#HEXCODE",
+    "border": "#HEXCODE"
+  }
+}
+```
+
+### 主题安装
+- 内置主题：`agent_boss/themes/*.json`
+- 用户主题：`~/.agentboss/themes/*.json`
+
+### 切换主题
+点击 ⚙️ 设置 → 选择主题
+
+---
+
+## 后续计划（Phase 2-4）
+
+### Phase 2: 角色系统
+- [x] 每个终端绑定一个 pixel avatar（默认 beaver）
+- [x] 点击 👾 Avatar 按钮显示/隐藏 avatar
+- [x] avatar 显示在终端右下角
+- [x] 支持切换不同 avatar（beaver/robot/wizard/cat/dragon）
+- [ ] avatar 与终端一一绑定，可独立选择
+- [ ] 右键 avatar 弹出选择菜单
+
+### Phase 3: 世界/房间
+- [x] 房间管理（main/backend/frontend/devops）
+- [x] RoomManager 管理房间 CRUD
+- [x] MapView 图形化展示房间和成员
+- [x] session 表增加 room_id / avatar_id 字段
+- [ ] 拖拽分配 agent 到房间
+- [ ] 房间视图与终端视图切换
+
+### Phase 4: 交互系统
+- [x] AgentDetailPanel 点击查看详情
+- [x] 快速命令按钮（Status/Tasks/Ping）
+- [x] 命令发送到 agent
+- [x] TaskManager 任务系统
+- [ ] 任务状态实时同步
+- [ ] 多人协作/广播指令
+
+---
+
 ## 验收标准
 
+- [x] 主题系统支持切换（Phase 1 可选功能）
 - [ ] 新建标签页可以启动独立 PowerShell 会话
 - [ ] 多个标签页之间切换保持独立状态
 - [ ] 点击「Claude」按钮在当前标签执行 `claude --acp`
 - [ ] 点击「Hermes」按钮在当前标签执行 `hermes`
 - [ ] 程序重启后恢复上次标签页
 - [ ] 原生窗口控件正常工作（最小化/最大化/关闭）
-
----
-
-## 后续计划（Phase 2）
-
-- 像素角色 avatar 叠加在终端上
-- agent 任务状态实时显示
-- 地图视图展示所有 agent

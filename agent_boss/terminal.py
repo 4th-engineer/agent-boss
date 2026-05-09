@@ -7,6 +7,7 @@ from PySide6.QtCore import QThread, Signal
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
 
 from agent_boss.process_manager import PtyProcess
+from agent_boss.avatar_overlay import AvatarOverlay
 
 
 class PtyReader(QThread):
@@ -47,11 +48,13 @@ class PtyReader(QThread):
 class TerminalWidget(QWidget):
     """Terminal emulator widget with ANSI color support."""
 
-    def __init__(self, process: PtyProcess, parent=None):
+    def __init__(self, process: PtyProcess, parent=None, avatar_id: str = "beaver"):
         super().__init__(parent)
         self._process = process
+        self._avatar_id = avatar_id
         self._setup_ui()
         self._start_reader()
+        self._setup_avatar()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
@@ -68,6 +71,50 @@ class TerminalWidget(QWidget):
         self._text_edit.installEventFilter(self)
 
         layout.addWidget(self._text_edit)
+
+        # Avatar overlay
+        self._avatar = AvatarOverlay(self, self._avatar_id)
+        self._avatar.hide()  # Hidden by default, toggle with method
+
+    def _setup_avatar(self):
+        """Position avatar in corner."""
+        # Will be repositioned when terminal is shown
+        pass
+
+    def resizeEvent(self, event):
+        """Reposition avatar when terminal resizes."""
+        super().resizeEvent(event)
+        if hasattr(self, '_avatar'):
+            self._avatar.reposition(self.rect())
+
+    def show_avatar(self):
+        """Show the avatar overlay."""
+        if hasattr(self, '_avatar'):
+            self._avatar.reposition(self.rect())
+            self._avatar.show()
+
+    def hide_avatar(self):
+        """Hide the avatar overlay."""
+        if hasattr(self, '_avatar'):
+            self._avatar.hide()
+
+    def toggle_avatar(self):
+        """Toggle avatar visibility."""
+        if hasattr(self, '_avatar'):
+            if self._avatar.isVisible():
+                self.hide_avatar()
+            else:
+                self.show_avatar()
+
+    def set_avatar(self, avatar_id: str):
+        """Change the avatar."""
+        self._avatar_id = avatar_id
+        if hasattr(self, '_avatar'):
+            self._avatar.set_avatar(avatar_id)
+
+    def get_avatar_id(self) -> str:
+        """Get current avatar ID."""
+        return self._avatar_id
 
     def _start_reader(self):
         self._reader = PtyReader(self._process)

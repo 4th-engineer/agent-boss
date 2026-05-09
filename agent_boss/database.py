@@ -23,6 +23,8 @@ def init_db():
                 tab_id TEXT UNIQUE NOT NULL,
                 tab_title TEXT NOT NULL,
                 working_dir TEXT,
+                avatar_id TEXT DEFAULT 'beaver',
+                room_id TEXT DEFAULT 'main',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 last_active_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
@@ -81,3 +83,29 @@ def set_setting(key: str, value: str):
             "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
             (key, value),
         )
+
+
+def get_session_avatar(tab_id: str) -> Optional[str]:
+    """Get avatar for a session."""
+    with get_connection() as conn:
+        row = conn.execute("SELECT avatar_id FROM sessions WHERE tab_id = ?", (tab_id,)).fetchone()
+        return row["avatar_id"] if row else None
+
+
+def set_session_avatar(tab_id: str, avatar_id: str):
+    """Set avatar for a session."""
+    with get_connection() as conn:
+        conn.execute("UPDATE sessions SET avatar_id = ? WHERE tab_id = ?", (avatar_id, tab_id))
+
+
+def get_session_room(tab_id: str) -> Optional[str]:
+    """Get room for a session."""
+    with get_connection() as conn:
+        row = conn.execute("SELECT room_id FROM sessions WHERE tab_id = ?", (tab_id,)).fetchone()
+        return row["room_id"] if row else None
+
+
+def set_session_room(tab_id: str, room_id: str):
+    """Set room for a session."""
+    with get_connection() as conn:
+        conn.execute("UPDATE sessions SET room_id = ? WHERE tab_id = ?", (room_id, tab_id))

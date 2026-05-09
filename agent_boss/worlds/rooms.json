@@ -1,0 +1,30 @@
+{
+  "main": {
+    "id": "main",
+    "name": "Main Hall",
+    "description": "Default room for all agents",
+    "color": "#007ACC",
+    "members": []
+  },
+  "backend": {
+    "id": "backend",
+    "name": "Backend Team",
+    "description": "Backend development agents",
+    "color": "#4CAF50",
+    "members": []
+  },
+  "frontend": {
+    "id": "frontend",
+    "name": "Frontend Team",
+    "description": "Frontend development agents",
+    "color": "#FF9800",
+    "members": []
+  },
+  "devops": {
+    "id": "devops",
+    "name": "DevOps Team",
+    "description": "Infrastructure and deployment agents",
+    "color": "#9C27B0",
+    "members": []
+  }
+}

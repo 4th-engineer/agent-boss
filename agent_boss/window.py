@@ -10,6 +10,7 @@ from agent_boss.tabs import TabManager
 from agent_boss.toolbar import Toolbar
 from agent_boss.process_manager import ProcessManager
 from agent_boss.database import init_db, get_all_sessions
+from agent_boss.theme import ThemeManager
 
 
 class MainWindow(QMainWindow):
@@ -18,18 +19,17 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self._process_manager = ProcessManager()
+        self._theme_manager = ThemeManager(self)
         init_db()
         self._setup_ui()
         self._restore_sessions()
         self._setup_shortcuts()
+        self._apply_theme()
 
     def _setup_ui(self):
         self.setWindowTitle("Agent Boss")
         self.setMinimumSize(900, 600)
-        self.setStyleSheet("""
-            QMainWindow { background: #1E1E1E; }
-            QStatusBar { background: #007ACC; color: #FFFFFF; }
-        """)
+        self.setStyleSheet("QMainWindow { background: #1E1E1E; } QStatusBar { background: #007ACC; color: #FFFFFF; }")
 
         central = QWidget()
         self.setCentralWidget(central)
@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
         self._toolbar.hermes_clicked.connect(self._on_hermes)
         self._toolbar.new_tab_clicked.connect(self._on_new_tab)
         self._toolbar.settings_clicked.connect(self._on_settings)
+        self._toolbar.avatar_toggled.connect(self._on_avatar_toggle)
         layout.addWidget(self._toolbar)
 
         self._tab_manager = TabManager(self._process_manager)
@@ -78,8 +79,26 @@ class MainWindow(QMainWindow):
             self._tab_manager.create_tab(title=title)
             self._status_bar.showMessage(f"Created: {title}")
 
+    def _apply_theme(self, theme_name: str = None):
+        self._theme_manager.apply_theme(self, theme_name)
+        if hasattr(self, '_toolbar'):
+            colors = self._theme_manager.get_colors()
+            self._toolbar.update_colors(colors)
+
+    def _on_avatar_toggle(self):
+        terminal = self._tab_manager.get_current_terminal()
+        if terminal:
+            terminal.toggle_avatar()
+            visible = terminal._avatar.isVisible() if hasattr(terminal, '_avatar') else False
+            self._status_bar.showMessage(f"Avatar: {'ON' if visible else 'OFF'}")
+
     def _on_settings(self):
-        QMessageBox.information(self, "Settings", "Settings coming soon...")
+        themes = self._theme_manager.list_themes()
+        current = self._theme_manager.get_theme().get("name", "default")
+        theme, ok = QInputDialog.getItem(self, "Settings", "Choose theme:", themes, themes.index(current) if current in themes else 0, False)
+        if ok and theme:
+            self._apply_theme(theme)
+            self._status_bar.showMessage(f"Theme: {theme}")
 
     def _close_current_tab(self):
         index = self._tab_manager.currentIndex()

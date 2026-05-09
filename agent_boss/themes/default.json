@@ -1,0 +1,15 @@
+{
+  "name": "Default Dark",
+  "description": "VSCode-style dark theme",
+  "colors": {
+    "bg": "#1E1E1E",
+    "fg": "#D4D4D4",
+    "tab_active": "#1E1E1E",
+    "tab_inactive": "#2D2D2D",
+    "toolbar": "#252526",
+    "button_hover": "#505050",
+    "statusbar": "#007ACC",
+    "accent": "#007ACC",
+    "border": "#3C3C3C"
+  }
+}

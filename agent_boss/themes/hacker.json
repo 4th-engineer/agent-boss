@@ -1,0 +1,15 @@
+{
+  "name": "Hacker",
+  "description": "Classic hacker green terminal",
+  "colors": {
+    "bg": "#0D0D0D",
+    "fg": "#00FF00",
+    "tab_active": "#001A00",
+    "tab_inactive": "#0D0D0D",
+    "toolbar": "#111111",
+    "button_hover": "#222222",
+    "statusbar": "#004400",
+    "accent": "#00FF00",
+    "border": "#003300"
+  }
+}

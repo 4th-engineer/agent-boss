@@ -1,0 +1,15 @@
+{
+  "name": "Ocean",
+  "description": "Calm ocean blue theme",
+  "colors": {
+    "bg": "#1A2332",
+    "fg": "#E0E8F0",
+    "tab_active": "#1A2332",
+    "tab_inactive": "#243447",
+    "toolbar": "#1E2A3A",
+    "button_hover": "#2E4155",
+    "statusbar": "#2E6B8A",
+    "accent": "#4A9ECA",
+    "border": "#34495E"
+  }
+}
