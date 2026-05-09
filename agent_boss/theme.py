@@ -59,7 +59,7 @@ class ThemeManager:
         if not theme:
             return
 
-        self._current_theme = name or DEFAULT_THEME
+        self._current_theme = name if name else DEFAULT_THEME
         colors = theme.get("colors", {})
 
         # Build stylesheet

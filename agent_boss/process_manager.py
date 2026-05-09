@@ -86,7 +86,7 @@ class PtyProcess:
             self._master_fd = None
         if self._pid is not None:
             try:
-                os.kill(self._pid, signal.SIGKILL)
+                os.kill(self._pid, signal.SIGTERM)
             except (OSError, ProcessLookupError) as e:
                 # Process may have already exited; not an error
                 print(f"PtyProcess close info (pid): {e}")

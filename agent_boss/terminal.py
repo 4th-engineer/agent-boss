@@ -2,6 +2,7 @@
 import re
 import sys
 import select as selector
+import threading
 from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout, QApplication
 from PySide6.QtCore import Qt, QThread, Signal, Property
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
@@ -19,22 +20,30 @@ class PtyReader(QThread):
         super().__init__()
         self._process = process
         self._running = False
+        self._lock = threading.Lock()
 
     def run(self):
         self._running = True
-        while self._running and self._process and not self._process.is_closed:
+        while self._running:
+            with self._lock:
+                if self._process is None or self._process.is_closed:
+                    break
             if sys.platform in ("linux", "darwin"):
                 master_fd = self._process.master_fd
                 if master_fd is not None:
                     try:
                         ready, _, _ = selector.select([master_fd], [], [], 0.05)
                         if ready:
+                            with self._lock:
+                                if self._process is None or self._process.is_closed:
+                                    break
                             data = self._process.read()
                             if data:
                                 self.output_ready.emit(data)
                         # Check if process closed during select
-                        if self._process.is_closed:
-                            break
+                        with self._lock:
+                            if self._process is None or self._process.is_closed:
+                                break
                     except (OSError, ValueError, RuntimeError) as e:
                         # Unexpected error in selector - process may have closed
                         print(f"PtyReader select error: {e}")
