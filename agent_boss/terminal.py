@@ -259,3 +259,6 @@ class TerminalWidget(QWidget):
                     print("Warning: PtyReader thread did not terminate cleanly")
             self._reader.deleteLater()
             del self._reader
+        if self._process:
+            self._process.close()
+            self._process = None

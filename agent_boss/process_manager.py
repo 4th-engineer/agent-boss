@@ -140,7 +140,7 @@ class ProcessManager:
                 os.close(slave_fd)
                 shell = os.environ.get("SHELL", "/bin/bash")
                 os.execvp(shell, [shell])
-            except Exception:
+            except OSError:
                 os._exit(1)
             # Should not reach here, but just in case
             os._exit(1)
