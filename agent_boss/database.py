@@ -57,6 +57,8 @@ def create_session(title: str = "PowerShell", working_dir: Optional[str] = None)
 
 
 def update_session(tab_id: str, title: Optional[str] = None, working_dir: Optional[str] = None):
+    if title is None and working_dir is None:
+        return
     with get_connection() as conn:
         if title is not None:
             conn.execute(

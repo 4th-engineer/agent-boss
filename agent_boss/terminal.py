@@ -176,7 +176,10 @@ class TerminalWidget(QWidget):
         """Handle key events for terminal input."""
         if obj == self._text_edit and isinstance(event, QKeyEvent):
             key = event.key()
-            if key == Qt.Key_Return:
+            if key == Qt.Key_Escape:
+                # Allow escape to bubble up (e.g., to clear selection)
+                pass
+            elif key == Qt.Key_Return:
                 self._process.write("\n")
                 return True
             elif key == Qt.Key_Backspace:
@@ -189,7 +192,6 @@ class TerminalWidget(QWidget):
                 self._process.write("\x03")
                 return True
             elif key == Qt.Key_V and event.modifiers() & Qt.ControlModifier:
-                # Handle paste - get clipboard and write to terminal
                 clipboard = QApplication.clipboard()
                 if clipboard:
                     text = clipboard.text()
@@ -200,7 +202,7 @@ class TerminalWidget(QWidget):
                 char = event.text()
                 if len(char) == 1 and 32 <= ord(char) < 127:
                     self._process.write(char)
-                return True
+                    return True
         return super().eventFilter(obj, event)
 
     def write_input(self, text: str):
