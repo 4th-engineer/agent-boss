@@ -28,13 +28,13 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 self._winpty_process.write(data)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"PtyProcess write error: {e}")
         elif self._master_fd is not None:
             try:
                 os.write(self._master_fd, data.encode("utf-8"))
-            except OSError:
-                pass
+            except OSError as e:
+                print(f"PtyProcess write error: {e}")
 
     def read(self) -> str:
         if self._closed:
@@ -42,12 +42,14 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 return self._winpty_process.read()
-            except Exception:
+            except Exception as e:
+                print(f"PtyProcess read error: {e}")
                 return ""
         elif self._master_fd is not None:
             try:
                 return os.read(self._master_fd, 65536).decode("utf-8", errors="replace")
-            except OSError:
+            except OSError as e:
+                print(f"PtyProcess read error: {e}")
                 return ""
         return ""
 
@@ -55,33 +57,33 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 self._winpty_process.set_size(cols, rows)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"PtyProcess resize error: {e}")
         elif self._master_fd is not None:
             try:
                 fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
-            except OSError:
-                pass
+            except OSError as e:
+                print(f"PtyProcess resize error: {e}")
 
     def close(self):
         self._closed = True
         if self._winpty_process:
             try:
                 self._winpty_process.kill()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"PtyProcess close error (winpty): {e}")
             self._winpty_process = None
         if self._master_fd is not None:
             try:
                 os.close(self._master_fd)
-            except OSError:
-                pass
+            except OSError as e:
+                print(f"PtyProcess close error (master_fd): {e}")
             self._master_fd = None
         if self._pid is not None:
             try:
                 os.kill(self._pid, 9)
-            except OSError:
-                pass
+            except OSError as e:
+                print(f"PtyProcess close error (kill pid): {e}")
             self._pid = None
 
 
