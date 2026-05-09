@@ -73,7 +73,12 @@ class RoomManager:
 
     def create_room(self, name: str, description: str, color: str) -> Room:
         """Create a new room."""
-        room_id = name.lower().replace(" ", "-")
+        base_id = name.lower().replace(" ", "-")
+        room_id = base_id
+        counter = 1
+        while room_id in self._rooms:
+            room_id = f"{base_id}-{counter}"
+            counter += 1
         room = Room(room_id, name, description, color)
         self._rooms[room_id] = room
         self._save_rooms()

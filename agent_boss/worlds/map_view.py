@@ -77,6 +77,7 @@ class MapView(QGraphicsView):
         self._scene.clear()
         self._room_items.clear()
         self._agent_items.clear()
+        self._agent_rooms.clear()
 
     def add_room(self, room_id: str, name: str, color: str, x: float, y: float, member_count: int = 0):
         """Add a room to the map."""

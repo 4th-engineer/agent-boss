@@ -236,5 +236,7 @@ class TerminalWidget(QWidget):
             self._reader.stop()
             if not self._reader.wait(1000):
                 self._reader.terminate()
+                # Ensure thread terminates after forceful termination
+                self._reader.wait(500)
             self._reader.deleteLater()
             del self._reader
