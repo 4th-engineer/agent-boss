@@ -28,13 +28,12 @@ class TabManager(QTabWidget):
         self.tabCloseRequested.connect(self._on_tab_close)
 
     def create_tab(self, title="PowerShell", working_dir=None):
-        process = self._process_manager.create_process(tab_id=title, rows=24, cols=80)
-        if not process:
-            return None
-
+        # Use UUID-based tab_id from the start to avoid collisions
         tab_id = create_session(title=title, working_dir=working_dir)
-        # Re-key process from temporary title to actual tab_id (no close needed)
-        self._process_manager._processes[tab_id] = self._process_manager._processes.pop(title)
+        process = self._process_manager.create_process(tab_id=tab_id, rows=24, cols=80)
+        if not process:
+            remove_session(tab_id)
+            return None
 
         terminal = TerminalWidget(process, self)
         index = self.addTab(terminal, title)

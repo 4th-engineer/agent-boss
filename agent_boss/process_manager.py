@@ -123,24 +123,18 @@ class ProcessManager:
 
         if pid == 0:
             # Child process
-            try:
-                os.close(master_fd)
-                os.setsid()
-                fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
-                os.dup2(slave_fd, 0)
-                os.dup2(slave_fd, 1)
-                os.dup2(slave_fd, 2)
-                os.close(slave_fd)
-                shell = os.environ.get("SHELL", "/bin/bash")
-                os.execvp(shell, [shell])
-            except Exception:
-                os._exit(1)
+            os.close(master_fd)
+            os.setsid()
+            fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
+            os.dup2(slave_fd, 0)
+            os.dup2(slave_fd, 1)
+            os.dup2(slave_fd, 2)
+            os.close(slave_fd)
+            shell = os.environ.get("SHELL", "/bin/bash")
+            os.execvp(shell, [shell])
 
         # Parent process
-        try:
-            os.close(slave_fd)
-        except OSError:
-            pass
+        os.close(slave_fd)
         flags = fcntl.fcntl(master_fd, fcntl.F_GETFL)
         fcntl.fcntl(master_fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 

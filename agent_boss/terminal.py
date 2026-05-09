@@ -34,11 +34,8 @@ class PtyReader(QThread):
                                 if data:
                                     self.output_ready.emit(data)
                     except (OSError, ValueError):
-                        # Unexpected error in selector - log and continue
-                        import traceback
-                        traceback.print_exc()
-                    except TimeoutError:
-                        pass  # Expected timeout, continue polling
+                        # Unexpected error in selector - process may have closed
+                        pass
                 else:
                     data = self._process.read()
                     if data:
