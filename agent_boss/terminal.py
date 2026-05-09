@@ -2,7 +2,7 @@
 import re
 import sys
 import select as selector
-from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout, QApplication
 from PySide6.QtCore import Qt, QThread, Signal, Property
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
 
@@ -65,7 +65,7 @@ class TerminalWidget(QWidget):
 
         self._text_edit = QTextEdit()
         self._text_edit.setReadOnly(True)
-        self._text_edit.setFont(QFont("Consolas", 10))
+        self._text_edit.setFont(QFont("Monospace", 10))
         self._text_edit.setStyleSheet("""
             QTextEdit { background-color: #1E1E1E; color: #D4D4D4; border: none; }
         """)
@@ -187,6 +187,14 @@ class TerminalWidget(QWidget):
                 return True
             elif key == Qt.Key_C and event.modifiers() == Qt.ControlModifier:
                 self._process.write("\x03")
+                return True
+            elif key == Qt.Key_V and event.modifiers() == Qt.ControlModifier:
+                # Handle paste - get clipboard and write to terminal
+                clipboard = QApplication.clipboard()
+                if clipboard:
+                    text = clipboard.text()
+                    if text:
+                        self._process.write(text)
                 return True
             elif event.text():
                 char = event.text()
