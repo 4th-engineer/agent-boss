@@ -69,7 +69,7 @@ class AvatarOverlay(QWidget):
 
         # Calculate pixel size to fit sprite in widget
         rows = len(self._sprite)
-        cols = len(self._sprite[0]) if rows > 0 else 1
+        cols = len(self._sprite[0]) if rows > 0 and self._sprite[0] else 1
         if rows == 0 or cols == 0 or self.width() == 0 or self.height() == 0:
             return
         cell_w = max(self.width() // max(cols, 1), 1)

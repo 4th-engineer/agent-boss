@@ -168,7 +168,7 @@ class TerminalWidget(QWidget):
                     elif code == "96": current_format.setForeground(QColor("#8BD9CA"))
                     elif code == "97": current_format.setForeground(QColor("#FFFFFF"))
             else:
-                if part:
+                if part and part.strip():
                     cursor.setCharFormat(current_format)
                     cursor.insertText(part)
 

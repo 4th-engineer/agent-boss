@@ -64,10 +64,8 @@ class WorldsPanel(QWidget):
     def _on_room_selected(self, room_id: str):
         """Handle room click."""
         room = self._room_manager.get_room(room_id)
-        if room:
-            agents = room.members
-            if agents:
-                self._detail_panel.set_agent(agents[0], room=room_id)
+        if room and room.members:
+            self._detail_panel.set_agent(room.members[0], room=room_id)
 
     def _on_agent_selected(self, agent_id: str):
         """Handle agent click."""
