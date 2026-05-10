@@ -108,7 +108,22 @@ class MapView(QGraphicsView):
             return
 
         self._agent_rooms[agent_id] = room_id
-        # Visual update would require recalculating positions
+
+        # Reposition agent node within the new room
+        room_item = self._room_items[room_id]
+        room_rect = room_item.rect()
+
+        # Count existing agents already in target room (excluding this one)
+        members_in_room = [
+            aid for aid, rid in self._agent_rooms.items()
+            if rid == room_id and aid != agent_id
+        ]
+        member_count = len(members_in_room)
+
+        agent = self._agent_items[agent_id]
+        new_x = room_rect.x() + 20 + (member_count % 3) * 40
+        new_y = room_rect.y() + 30 + (member_count // 3) * 40
+        agent.setRect(new_x, new_y, 35, 35)
 
     def mousePressEvent(self, event):
         """Handle click on items."""
