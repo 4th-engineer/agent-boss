@@ -38,3 +38,4 @@
 | 2026-05-11 | AgentBoss  | terminal.py ANSI parser: 3组重复 elif 链 (fg 30-37, bg 40-47, bright fg 90-97) → dict lookup `_STD_FG/_BRIGHT_FG/_STD_BG`；O(1) 查找替代 O(n) 线性分支，parser 路径缩短 ~40 行 | 中：消除重复代码，解析器可维护性提升，性能微增 |
 | 2026-05-11 | AgentBoss  | tabs.py create_tab: wrap addTab+_tab_widgets assignment in try/except — DB session创建失败时正确清理已addTab的TerminalWidget，防止orphan widget残留+QTabWidget关闭时double-remove_session报错 | 中：修复资源泄漏 + DB二次删除异常 |
 
+| 2026-05-11 | AgentBoss  | map_view.py: 添加 `logger = getLogger(__name__)` — 唯一没有logger的模块；refresh_map添加 warning 防护 None _room_manager + try/except 保护房间迭代，防止 rooms.json 损坏时 worlds_panel 崩溃 | 中：Worlds map 健壮性增强，错误日志化 |
