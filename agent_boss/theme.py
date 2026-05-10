@@ -42,7 +42,7 @@ class ThemeManager:
                         theme = json.load(f)
                         name = file.stem
                         self._themes[name] = theme
-                except Exception as e:
+                except (OSError, ValueError) as e:
                     logger.warning("Failed to load theme %s: %s", file, e)
 
     def list_themes(self) -> list[str]:
