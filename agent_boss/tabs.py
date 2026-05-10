@@ -92,8 +92,16 @@ class TabManager(QTabWidget):
             self.tab_closed.emit("all_closed")
 
     def close_all_tabs(self):
-        while self.count() > 0:
-            self._on_tab_close(0)
+        """Close all open tabs, logging any failures to prevent infinite loops."""
+        iterations = 0
+        max_iterations = self.count() + 1
+        while self.count() > 0 and iterations < max_iterations:
+            try:
+                self._on_tab_close(0)
+            except Exception as e:
+                logger.error("close_all_tabs: failed to close tab at index 0: %s — aborting cleanup", e)
+                break
+            iterations += 1
 
     def run_command_in_current(self, command):
         terminal = self.get_current_terminal()
