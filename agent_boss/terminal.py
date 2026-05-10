@@ -34,6 +34,20 @@ _xterm256: list[str] = [
 # 232-255: grayscale (24 colors: 0x08..0xEE, step 10)
 ] + [f"#{i:02x}{i:02x}{i:02x}" for i in range(8, 0xF0, 10)]
 
+# ANSI SGR foreground/background lookup tables
+_STD_FG: dict[str, str] = {
+    "30": "#000000", "31": "#CC0000", "32": "#4E9A06", "33": "#C4A000",
+    "34": "#3465A4", "35": "#75517B", "36": "#06989A", "37": "#FFFFFF",
+}
+_BRIGHT_FG: dict[str, str] = {
+    "90": "#555555", "91": "#F2777A", "92": "#9FD900", "93": "#FEE12B",
+    "94": "#6CB6FF", "95": "#D397EE", "96": "#8BD9CA", "97": "#FFFFFF",
+}
+_STD_BG: dict[str, str] = {
+    "40": "#000000", "41": "#CC0000", "42": "#4E9A06", "43": "#C4A000",
+    "44": "#3465A4", "45": "#75517B", "46": "#06989A", "47": "#FFFFFF",
+}
+
 
 class PtyReader(QThread):
     """Reads PTY output in background thread."""
@@ -255,34 +269,18 @@ class TerminalWidget(QWidget):
                     elif code == "29":
                         current_format.setFontStrikeOut(default_format.fontStrikeOut())
                     # ── Standard foreground (30-37, 39) ───────────────────────
-                    elif code == "30": current_format.setForeground(QColor("#000000"))
-                    elif code == "31": current_format.setForeground(QColor("#CC0000"))
-                    elif code == "32": current_format.setForeground(QColor("#4E9A06"))
-                    elif code == "33": current_format.setForeground(QColor("#C4A000"))
-                    elif code == "34": current_format.setForeground(QColor("#3465A4"))
-                    elif code == "35": current_format.setForeground(QColor("#75517B"))
-                    elif code == "36": current_format.setForeground(QColor("#06989A"))
-                    elif code == "37": current_format.setForeground(QColor("#FFFFFF"))
-                    elif code == "39": current_format.setForeground(default_format.foreground())
+                    elif code in _STD_FG:
+                        current_format.setForeground(QColor(_STD_FG[code]))
+                    elif code == "39":
+                        current_format.setForeground(default_format.foreground())
                     # ── Bright foreground (90-97) ─────────────────────────────
-                    elif code == "90": current_format.setForeground(QColor("#555555"))
-                    elif code == "91": current_format.setForeground(QColor("#F2777A"))
-                    elif code == "92": current_format.setForeground(QColor("#9FD900"))
-                    elif code == "93": current_format.setForeground(QColor("#FEE12B"))
-                    elif code == "94": current_format.setForeground(QColor("#6CB6FF"))
-                    elif code == "95": current_format.setForeground(QColor("#D397EE"))
-                    elif code == "96": current_format.setForeground(QColor("#8BD9CA"))
-                    elif code == "97": current_format.setForeground(QColor("#FFFFFF"))
+                    elif code in _BRIGHT_FG:
+                        current_format.setForeground(QColor(_BRIGHT_FG[code]))
                     # ── Standard background (40-47, 49) ───────────────────────
-                    elif code == "40": current_format.setBackground(QColor("#000000"))
-                    elif code == "41": current_format.setBackground(QColor("#CC0000"))
-                    elif code == "42": current_format.setBackground(QColor("#4E9A06"))
-                    elif code == "43": current_format.setBackground(QColor("#C4A000"))
-                    elif code == "44": current_format.setBackground(QColor("#3465A4"))
-                    elif code == "45": current_format.setBackground(QColor("#75517B"))
-                    elif code == "46": current_format.setBackground(QColor("#06989A"))
-                    elif code == "47": current_format.setBackground(QColor("#FFFFFF"))
-                    elif code == "49": current_format.setBackground(default_format.background())
+                    elif code in _STD_BG:
+                        current_format.setBackground(QColor(_STD_BG[code]))
+                    elif code == "49":
+                        current_format.setBackground(default_format.background())
                     # ── Extended foreground: 38;5;N (256-color) or 38;2;R;G;B (24-bit)
                     elif code == "38":
                         if i < len(codes):
