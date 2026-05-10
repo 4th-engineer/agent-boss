@@ -24,5 +24,6 @@
 | 2026-05-11 | AgentBoss  | tabs.py close_all_tabs: 添加 try/except + iteration guard — 防止 _on_tab_close 异常导致无限循环；之前无保护 | 中：关闭所有标签时防止应用冻结 |
 | 2026-05-11 | AgentBoss  | terminal.py: remove super().cleanup() — QWidget has no cleanup() method, every tab close raised AttributeError (被 tabs.py try/except 掩盖) | 中：修复每次关闭标签时的异常泄漏 |
 | 2026-05-11 | AgentBoss  | terminal.py: PtyReader winpty 分支注释澄清 msleep(50) 的作用是防止 CPU 空转，与 Linux 分支 selector.select 行为对齐 | 中：Windows PTY 性能优化 |
-| 2026-05-11 | AgentBoss  | avatar_overlay.py: DRY avatars.json 路径为模块级常量 _AVATARS_JSON_PATH — 消除 _load_avatar 和 list_avatars 重复计算路径；日志现在也包含完整路径 | 低：代码复用 + 调试可追溯性 |
+| 2026-05-11 | AgentBoss  | database.py: update_session — 3-branch if/elif/else 合并为 1 条 COALESCE UPDATE，DB 往返从 2-3 次降至 1 次 | 中：高频函数性能优化，session 刷新延迟降低 |
+
 
