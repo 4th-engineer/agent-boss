@@ -305,6 +305,10 @@ class TerminalWidget(QWidget):
                                     logger.warning("ANSI parser: malformed 24-bit foreground RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
                                     i += 3
                                     continue
+                                if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
+                                    logger.warning("ANSI parser: 24-bit foreground RGB out of range (%d,%d,%d) at pos %d", r, g, b, i)
+                                    i += 3
+                                    continue
                                 i += 3
                                 current_format.setForeground(QColor(r, g, b))
                     # ── Extended background: 48;5;N or 48;2;R;G;B ───────────
@@ -327,6 +331,10 @@ class TerminalWidget(QWidget):
                                     r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
                                 except ValueError:
                                     logger.warning("ANSI parser: malformed 24-bit background RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
+                                    i += 3
+                                    continue
+                                if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
+                                    logger.warning("ANSI parser: 24-bit background RGB out of range (%d,%d,%d) at pos %d", r, g, b, i)
                                     i += 3
                                     continue
                                 i += 3
