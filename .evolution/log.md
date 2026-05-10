@@ -28,5 +28,5 @@
 | 2026-05-11 | AgentBoss  | terminal.py: PtyReader winpty 分支注释澄清 msleep(50) 的作用是防止 CPU 空转，与 Linux 分支 selector.select 行为对齐 | 中：Windows PTY 性能优化 |
 | 2026-05-11 | AgentBoss  | database.py: update_session — 3-branch if/elif/else 合并为 1 条 COALESCE UPDATE，DB 往返从 2-3 次降至 1 次 | 中：高频函数性能优化，session 刷新延迟降低 |
 | 2026-05-11 | AgentBoss  | terminal.py: 修复 _xterm256 grayscale range off-by-one — `range(8,0xEE+1,10)` 缺最后一格致灰度 232-255 仅 23 色；改为 `range(8,0xF0,10)` 覆盖全部 24 色 | 低：终端灰度渲染完整性，修复 `ls --color=auto` 灰度渐变断档 |
-
+| 2026-05-11 | AgentBoss  | terminal.py ANSI parser: 4处 bare `except ValueError`/`int()` 替换为 try/except + logging.warning — 256-color fg/bg + 24-bit fg/bg；之前解析失败静默丢失输出，高频路径无错误可见性 | 中：ANSI 渲染错误现在有日志可追溯，不再静默丢字符 |
 
