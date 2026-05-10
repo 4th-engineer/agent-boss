@@ -1,9 +1,12 @@
 """Tab management for terminal sessions."""
+import logging
 from PySide6.QtWidgets import QTabWidget
 from PySide6.QtCore import Signal
 from agent_boss.terminal import TerminalWidget
 from agent_boss.process_manager import ProcessManager
 from agent_boss.database import create_session, remove_session
+
+logger = logging.getLogger(__name__)
 
 
 class TabManager(QTabWidget):
@@ -68,12 +71,21 @@ class TabManager(QTabWidget):
                 break
 
         if tab_id:
-            self._process_manager.remove_process(tab_id)
-            remove_session(tab_id)
+            try:
+                self._process_manager.remove_process(tab_id)
+            except Exception as e:
+                logger.warning("Failed to remove process for tab %s: %s — leaking process", tab_id, e)
+            try:
+                remove_session(tab_id)
+            except Exception as e:
+                logger.warning("Failed to remove session %s from DB: %s", tab_id, e)
             del self._tab_widgets[tab_id]
 
         self.removeTab(index)
-        widget.cleanup()
+        try:
+            widget.cleanup()
+        except Exception as e:
+            logger.warning("Failed to cleanup widget for tab %s: %s", tab_id, e)
         widget.deleteLater()
 
         if self.count() == 0:
