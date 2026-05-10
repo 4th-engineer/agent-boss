@@ -131,9 +131,10 @@ class RoomManager:
         return []
 
     def unassigned_agents(self) -> list[str]:
-        """Get agents not in any room.
+        """Get agents not assigned to any room.
 
-        Note: This returns all known agents from _agents dict.
-        For a true unassigned list, would need a separate registry.
+        Note: Agents assigned to the 'main' room are considered assigned.
+        Only agents with no entry in _agents are truly unassigned.
         """
-        return list(self._agents.keys())
+        assigned = set(self._agents.keys())
+        return [aid for aid in self._rooms.get("main", Room("", "", "", "")).members if aid not in assigned]

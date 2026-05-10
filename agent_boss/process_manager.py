@@ -78,7 +78,7 @@ class PtyProcess:
             except OSError as e:
                 print(f"PtyProcess close error (winpty): {e}")
             self._winpty_process = None
-        if self._master_fd is not None:
+        if getattr(self, '_close_master_on_cleanup', False) and self._master_fd is not None:
             try:
                 os.close(self._master_fd)
             except OSError as e:
@@ -142,8 +142,6 @@ class ProcessManager:
                 os.execvp(shell, [shell])
             except OSError:
                 os._exit(1)
-            # Should not reach here, but just in case
-            os._exit(1)
 
         # Parent process
         os.close(slave_fd)
@@ -151,6 +149,8 @@ class ProcessManager:
         fcntl.fcntl(master_fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
         process = PtyProcess(master_fd, pid)
+        # Close master_fd when process is cleaned up to prevent fd leak
+        process._close_master_on_cleanup = True
         process.resize(rows, cols)
         self._processes[tab_id] = process
         return process
