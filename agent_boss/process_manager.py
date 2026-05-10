@@ -36,7 +36,7 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 self._winpty_process.write(data)
-            except Exception as e:
+            except (OSError, ValueError, TypeError) as e:
                 logger.error("PtyProcess write error", exc_info=e)
         elif self._master_fd is not None:
             try:
@@ -65,7 +65,7 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 self._winpty_process.set_size(cols, rows)
-            except Exception as e:
+            except (OSError, ValueError, TypeError) as e:
                 logger.error("PtyProcess resize error", exc_info=e)
         elif self._master_fd is not None:
             try:
