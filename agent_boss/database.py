@@ -57,8 +57,13 @@ def init_db():
             if "sessions" not in tables or "settings" not in tables:
                 raise RuntimeError("Database schema initialization failed")
         logger.info("Database initialized at %s", DB_PATH)
-    except (sqlite3.Error, RuntimeError) as e:
+    except OSError as e:
+        # sqlite3.Error is a subclass of OSError, covers path/permission/IO failures
+        # RuntimeError covers schema verification failure
         logger.error("Database initialization failed: %s", e)
+        raise
+    except RuntimeError as e:
+        logger.error("Database schema verification failed: %s", e)
         raise
 
 
