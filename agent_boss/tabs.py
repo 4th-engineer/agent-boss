@@ -44,10 +44,19 @@ class TabManager(QTabWidget):
             self._tab_widgets[tab_id] = terminal
             self.setCurrentIndex(index)
             return tab_id
-        except Exception:
-            # DB session creation failed — clean up orphan widget before re-raising
-            self.removeTab(self.indexOf(terminal))
-            terminal.cleanup()
+        except Exception as e:
+            # Tab creation failed — clean up orphan widget before re-raising
+            # Log the actual error so we know whether it was addTab/setCurrentIndex
+            # vs the session DB (the original comment was misleading)
+            logger.error("create_tab failed: %s — cleaning up orphan TerminalWidget", e)
+            try:
+                self.removeTab(self.indexOf(terminal))
+            except Exception:
+                pass  # Best-effort cleanup
+            try:
+                terminal.cleanup()
+            except Exception:
+                pass
             terminal.deleteLater()
             raise
 
