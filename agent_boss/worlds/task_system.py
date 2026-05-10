@@ -1,7 +1,10 @@
 """Task system for agent coordination."""
+import logging
 import uuid
 from datetime import datetime
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 class Task:
@@ -43,6 +46,7 @@ class TaskManager:
         """Create a new task."""
         task = Task(title, description, agent_id)
         self._tasks[task.id] = task
+        logger.debug("Task created: %s for agent %s", task.id, agent_id)
         return task
 
     def get_task(self, task_id: str) -> Optional[Task]:
@@ -55,9 +59,12 @@ class TaskManager:
     def update_status(self, task_id: str, status: str) -> bool:
         """Update task status."""
         if task_id in self._tasks:
+            old_status = self._tasks[task_id].status
             self._tasks[task_id].status = status
             self._tasks[task_id].updated_at = datetime.now()
+            logger.info("Task %s status: %s → %s", task_id, old_status, status)
             return True
+        logger.warning("update_status: task %s not found", task_id)
         return False
 
     def list_tasks(self, status: Optional[str] = None) -> list[Task]:

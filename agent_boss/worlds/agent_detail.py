@@ -1,9 +1,13 @@
 """Agent detail panel for viewing agent info and sending commands."""
+import logging
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QTextEdit, QLineEdit, QListWidget
 )
 from PySide6.QtCore import Signal
+
+logger = logging.getLogger(__name__)
 
 
 class AgentDetailPanel(QWidget):
