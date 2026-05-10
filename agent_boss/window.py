@@ -1,4 +1,6 @@
 """Main window for agent_boss."""
+import logging
+
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout,
     QStatusBar, QMessageBox, QInputDialog, QLineEdit
@@ -11,6 +13,8 @@ from agent_boss.toolbar import Toolbar
 from agent_boss.process_manager import ProcessManager
 from agent_boss.database import init_db, get_all_sessions
 from agent_boss.theme import ThemeManager
+
+logger = logging.getLogger(__name__)
 
 
 class MainWindow(QMainWindow):
@@ -62,11 +66,18 @@ class MainWindow(QMainWindow):
 
     def _restore_sessions(self):
         sessions = get_all_sessions()
+        restored = 0
         for session in sessions:
             tab_id = session["tab_id"]
             title = session["tab_title"]
             working_dir = session["working_dir"]
-            self._tab_manager.create_tab(title=title, working_dir=working_dir)
+            try:
+                self._tab_manager.create_tab(title=title, working_dir=working_dir)
+                restored += 1
+            except Exception as e:
+                logger.warning("Failed to restore session %s (%s): %s — skipping", tab_id, title, e)
+        if restored > 0:
+            logger.info("Restored %d session(s) from database", restored)
 
     def _on_claude(self):
         self._tab_manager.run_command_in_current("claude --acp\n")
