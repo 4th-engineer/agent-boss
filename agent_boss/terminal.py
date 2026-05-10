@@ -91,7 +91,7 @@ class PtyReader(QThread):
                         logger.warning("PtyReader select error: %s", e)
                         break
                 else:
-                    # winpty path - no fd-based select, just poll
+                    # winpty path - no fd-based select, poll with short sleep to avoid CPU spin
                     try:
                         data = proc.read()
                         if data:
