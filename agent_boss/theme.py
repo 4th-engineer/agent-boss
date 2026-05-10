@@ -5,7 +5,6 @@ by placing JSON files in ~/.agentboss/themes/ or the bundled themes/ directory.
 """
 import json
 import logging
-import os
 from pathlib import Path
 from typing import Optional
 

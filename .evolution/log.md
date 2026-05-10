@@ -6,3 +6,4 @@
 | 2026-05-10 | AgentBoss  | 替换 terminal.py 中 3 处 print() 为 logging.warning | 中：PTY 错误处理日志化 |
 | 2026-05-10 | AgentBoss  | 替换 avatar/theme/worlds_panel 中 3 处 print() 为 logging | 中：覆盖层/主题/面板调试残留清除 |
 | 2026-05-10 | AgentBoss  | 修复 unassigned_agents() 逻辑：改用 main.members 而非 _agents 作为真相源 | 中：修复 room_manager 核心查找逻辑 |
+| 2026-05-10 | AgentBoss  | 修复 list_avatars() 静默失败：添加 logging.warning 记录 JSON/OSError | 低：调试可追溯性提升 |
