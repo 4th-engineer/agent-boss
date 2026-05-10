@@ -50,8 +50,8 @@ class PtyProcess:
         if self._winpty_process:
             try:
                 return self._winpty_process.read()
-            except Exception as e:
-                logger.error("PtyProcess read error", exc_info=e)
+            except (OSError, ValueError, TypeError) as e:
+                logger.error("PtyProcess read error (winpty)", exc_info=e)
                 return ""
         elif self._master_fd is not None:
             try:
