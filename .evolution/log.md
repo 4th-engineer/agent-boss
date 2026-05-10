@@ -20,4 +20,5 @@
 | 2026-05-10 | AgentBoss  | worlds/map_view.py: MapView.mousePressEvent now calls event.accept() after RoomItem/AgentNode click — fixes double-fire bug where child item click propagated to parent, emitting signals twice | 中：修复 world map 点击时信号重复触发的竞态/传播问题 |
 | 2026-05-10 | AgentBoss  | 移除 theme.py 中未使用的 self._app = app（ThemeManager 构造函数中的死代码） | 低：清理无用实例变量，减小对象内存占用 |
 | 2026-05-10 | AgentBoss  | tabs.py: _on_tab_close 三个操作全部包 try/except — remove_process/remove_session/cleanup 任意失败不再导致部分清理 + 静默资源泄漏 | 中：关闭标签页时的进程/DB/Widget 资源泄漏问题修复 |
+| 2026-05-11 | AgentBoss  | .gitignore: add *.bak + 删除已被追踪的 __init__.py.bak — 防止备份文件混入 git | 中：清理历史遗留垃圾文件 |
 
