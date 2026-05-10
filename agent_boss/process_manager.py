@@ -5,7 +5,10 @@ import signal
 import fcntl
 import termios
 import struct
+import logging
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 class PtyProcess:
@@ -34,12 +37,12 @@ class PtyProcess:
             try:
                 self._winpty_process.write(data)
             except Exception as e:
-                print(f"PtyProcess write error: {e}")
+                logger.error("PtyProcess write error", exc_info=e)
         elif self._master_fd is not None:
             try:
                 os.write(self._master_fd, data.encode("utf-8"))
             except OSError as e:
-                print(f"PtyProcess write error: {e}")
+                logger.error("PtyProcess write error", exc_info=e)
 
     def read(self) -> str:
         if self._closed:
@@ -48,13 +51,13 @@ class PtyProcess:
             try:
                 return self._winpty_process.read()
             except Exception as e:
-                print(f"PtyProcess read error: {e}")
+                logger.error("PtyProcess read error", exc_info=e)
                 return ""
         elif self._master_fd is not None:
             try:
                 return os.read(self._master_fd, 65536).decode("utf-8", errors="replace")
             except OSError as e:
-                print(f"PtyProcess read error: {e}")
+                logger.error("PtyProcess read error", exc_info=e)
                 return ""
         return ""
 
@@ -63,12 +66,12 @@ class PtyProcess:
             try:
                 self._winpty_process.set_size(cols, rows)
             except Exception as e:
-                print(f"PtyProcess resize error: {e}")
+                logger.error("PtyProcess resize error", exc_info=e)
         elif self._master_fd is not None:
             try:
                 fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
             except OSError as e:
-                print(f"PtyProcess resize error: {e}")
+                logger.error("PtyProcess resize error", exc_info=e)
 
     def close(self):
         self._closed = True
@@ -76,20 +79,20 @@ class PtyProcess:
             try:
                 self._winpty_process.kill()
             except OSError as e:
-                print(f"PtyProcess close error (winpty): {e}")
+                logger.warning("PtyProcess close error (winpty)", exc_info=e)
             self._winpty_process = None
         if getattr(self, '_close_master_on_cleanup', False) and self._master_fd is not None:
             try:
                 os.close(self._master_fd)
             except OSError as e:
-                print(f"PtyProcess close error (master_fd): {e}")
+                logger.warning("PtyProcess close error (master_fd)", exc_info=e)
             self._master_fd = None
         if self._pid is not None:
             try:
                 os.kill(self._pid, signal.SIGTERM)
             except (OSError, ProcessLookupError) as e:
                 # Process may have already exited; not an error
-                print(f"PtyProcess close info (pid): {e}")
+                logger.debug("PtyProcess close info (pid)", exc_info=e)
             # Reap zombie process to prevent resource leaks
             try:
                 os.waitpid(self._pid, os.WNOHANG)
@@ -111,7 +114,7 @@ class ProcessManager:
                 import winpty
                 self._winpty = winpty
             except ImportError:
-                print("winpty not installed, Windows PTY not available")
+                logger.warning("winpty not installed, Windows PTY not available")
 
     def create_process(self, tab_id: str, rows: int = 24, cols: int = 80):
         try:
@@ -120,7 +123,7 @@ class ProcessManager:
             else:
                 return self._create_unix_process(tab_id, rows, cols)
         except Exception as e:
-            print(f"Failed to create PTY process: {e}")
+            logger.error("Failed to create PTY process", exc_info=e)
             return None
 
     def _create_unix_process(self, tab_id: str, rows: int, cols: int):
@@ -167,7 +170,7 @@ class ProcessManager:
             self._processes[tab_id] = process
             return process
         except Exception as e:
-            print(f"Failed to create winpty process: {e}")
+            logger.error("Failed to create winpty process", exc_info=e)
             return None
 
     def get_process(self, tab_id: str):
