@@ -1,7 +1,11 @@
 """Avatar selector dialog."""
+import logging
+
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QPushButton, QLabel, QScrollArea, QWidget
 from PySide6.QtCore import Signal
 from agent_boss.avatar_overlay import list_avatars
+
+logger = logging.getLogger(__name__)
 
 
 class AvatarSelector(QDialog):
@@ -29,7 +33,11 @@ class AvatarSelector(QDialog):
         container = QWidget()
         grid = QGridLayout(container)
 
-        avatars = list_avatars()
+        try:
+            avatars = list_avatars()
+        except Exception as e:
+            logger.warning("Failed to load avatars for selector — showing empty grid: %s", e)
+            avatars = []
         for i, avatar in enumerate(avatars):
             row = i // 3
             col = i % 3
