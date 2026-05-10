@@ -1,10 +1,13 @@
 """Pixel avatar overlay for terminals."""
 import json
+import logging
 from pathlib import Path
 
 from PySide6.QtWidgets import QWidget, QLabel
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPainter, QColor, QFont
+
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_AVATAR = "beaver"
@@ -41,7 +44,7 @@ class AvatarOverlay(QWidget):
                     self._colors = self._avatar_data.get("colors", {})
                     return
         except Exception as e:
-            print(f"Failed to load avatar {avatar_id}: {e}")
+            logger.warning("Failed to load avatar %s: %s", avatar_id, e)
 
         # Fallback to default avatar
         if avatar_id != DEFAULT_AVATAR:

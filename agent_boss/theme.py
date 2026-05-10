@@ -4,9 +4,12 @@ Themes are JSON files with color definitions. Users can add custom themes
 by placing JSON files in ~/.agentboss/themes/ or the bundled themes/ directory.
 """
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_THEME = "default"
@@ -41,7 +44,7 @@ class ThemeManager:
                         name = file.stem
                         self._themes[name] = theme
                 except Exception as e:
-                    print(f"Failed to load theme {file}: {e}")
+                    logger.warning("Failed to load theme %s: %s", file, e)
 
     def list_themes(self) -> list[str]:
         """Return list of available theme names."""

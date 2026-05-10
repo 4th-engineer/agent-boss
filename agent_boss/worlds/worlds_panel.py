@@ -1,9 +1,13 @@
 """Worlds panel - combines map view and agent detail."""
+import logging
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter,
     QLabel, QPushButton, QTabWidget, QListWidget
 )
 from PySide6.QtCore import Qt
+
+logger = logging.getLogger(__name__)
 
 from agent_boss.worlds.map_view import MapWidget
 from agent_boss.worlds.agent_detail import AgentDetailPanel
@@ -75,7 +79,7 @@ class WorldsPanel(QWidget):
 
     def _on_command_sent(self, agent_id: str, cmd: str):
         """Handle command sent to agent."""
-        print(f"Command to {agent_id}: {cmd}")
+        logger.info("Command to %s: %s", agent_id, cmd)
 
     def get_task_manager(self) -> TaskManager:
         """Get the task manager."""
