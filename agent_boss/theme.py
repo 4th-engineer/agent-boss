@@ -18,7 +18,6 @@ class ThemeManager:
     """Manages themes and applies them to the UI."""
 
     def __init__(self, app=None):
-        self._app = app
         self._current_theme = None
         self._themes_dir = self._get_themes_dir()
         self._themes: dict[str, dict] = {}
