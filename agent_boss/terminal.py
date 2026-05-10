@@ -374,4 +374,4 @@ class TerminalWidget(QWidget):
         if self._process:
             self._process.close()
             self._process = None
-        super().cleanup()
+        # Note: QWidget has no cleanup() method — do not call super().cleanup()
