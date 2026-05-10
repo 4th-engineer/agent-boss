@@ -193,6 +193,12 @@ class TerminalWidget(QWidget):
                     elif code == "22":
                         # Normal weight - reset to default foreground
                         current_format.setForeground(default_format.foreground())
+                    elif code == "24":
+                        # Underline off - reset font underline
+                        current_format.setFontUnderline(default_format.fontUnderline())
+                    elif code == "27":
+                        # Strikethrough off - reset font strikeout
+                        current_format.setFontStrikeOut(default_format.fontStrikeOut())
                     elif code == "30": current_format.setForeground(QColor("#000000"))
                     elif code == "31": current_format.setForeground(QColor("#CC0000"))
                     elif code == "32": current_format.setForeground(QColor("#4E9A06"))
