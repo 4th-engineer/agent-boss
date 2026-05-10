@@ -1,10 +1,12 @@
 """SQLite database for session persistence."""
 import sqlite3
+import logging
 import threading
 from pathlib import Path
 from typing import Optional
 import uuid
 
+logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "agentboss.db"
 
@@ -20,35 +22,44 @@ def get_connection() -> sqlite3.Connection:
     QSqlDatabase for proper thread safety.
     """
     if not hasattr(_thread_local, 'conn') or _thread_local.conn is None:
-        _thread_local.conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-        _thread_local.conn.row_factory = sqlite3.Row
+        try:
+            _thread_local.conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+            _thread_local.conn.row_factory = sqlite3.Row
+        except sqlite3.Error as e:
+            logger.error("Failed to open database at %s: %s", DB_PATH, e)
+            raise
     return _thread_local.conn
 
 
 def init_db():
     """Initialize database schema."""
-    with get_connection() as conn:
-        conn.executescript("""
-            CREATE TABLE IF NOT EXISTS sessions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                tab_id TEXT UNIQUE NOT NULL,
-                tab_title TEXT NOT NULL,
-                working_dir TEXT,
-                avatar_id TEXT DEFAULT 'beaver',
-                room_id TEXT DEFAULT 'main',
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                last_active_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS settings (
-                key TEXT PRIMARY KEY,
-                value TEXT
-            );
-        """)
-        # Verify schema after creation
-        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables = {row[0] for row in cursor}
-        if "sessions" not in tables or "settings" not in tables:
-            raise RuntimeError("Database schema initialization failed")
+    try:
+        with get_connection() as conn:
+            conn.executescript("""
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tab_id TEXT UNIQUE NOT NULL,
+                    tab_title TEXT NOT NULL,
+                    working_dir TEXT,
+                    avatar_id TEXT DEFAULT 'beaver',
+                    room_id TEXT DEFAULT 'main',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    last_active_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS settings (
+                    key TEXT PRIMARY KEY,
+                    value TEXT
+                );
+            """)
+            # Verify schema after creation
+            cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables = {row[0] for row in cursor}
+            if "sessions" not in tables or "settings" not in tables:
+                raise RuntimeError("Database schema initialization failed")
+        logger.info("Database initialized at %s", DB_PATH)
+    except (sqlite3.Error, RuntimeError) as e:
+        logger.error("Database initialization failed: %s", e)
+        raise
 
 
 def create_session(title: str = "PowerShell", working_dir: Optional[str] = None) -> str:
