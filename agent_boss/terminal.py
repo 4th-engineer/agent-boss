@@ -50,14 +50,28 @@ class PtyReader(QThread):
                         print(f"PtyReader select error: {e}")
                         break
             else:
+                # Fallback for other platforms (e.g. other Unix, or Windows with winpty)
                 with self._lock:
                     if self._process is None or self._process.is_closed:
                         break
                     proc = self._process
-                data = proc.read()
-                if data:
-                    self.output_ready.emit(data)
-                QThread.msleep(50)
+                master_fd = proc.master_fd
+                if master_fd is not None:
+                    try:
+                        ready, _, _ = selector.select([master_fd], [], [], 0.05)
+                        if ready:
+                            data = proc.read()
+                            if data:
+                                self.output_ready.emit(data)
+                    except (OSError, ValueError, RuntimeError) as e:
+                        print(f"PtyReader select error: {e}")
+                        break
+                else:
+                    # winpty path - no fd-based select, just poll
+                    data = proc.read()
+                    if data:
+                        self.output_ready.emit(data)
+                    QThread.msleep(50)
 
     def stop(self):
         self._running = False
@@ -246,7 +260,8 @@ class TerminalWidget(QWidget):
         return super().eventFilter(obj, event)
 
     def write_input(self, text: str):
-        if self._process:
+        """Write text input to the PTY process."""
+        if self._process and not self._process.is_closed:
             self._process.write(text)
 
     def cleanup(self):
@@ -262,3 +277,4 @@ class TerminalWidget(QWidget):
         if self._process:
             self._process.close()
             self._process = None
+        super().cleanup()
