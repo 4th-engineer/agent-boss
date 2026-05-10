@@ -1,6 +1,10 @@
 """Toolbar with action buttons."""
+import logging
+
 from PySide6.QtWidgets import QToolBar, QPushButton, QWidget, QSizePolicy
 from PySide6.QtCore import Signal
+
+logger = logging.getLogger(__name__)
 
 
 class Toolbar(QToolBar):
