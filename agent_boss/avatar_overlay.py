@@ -135,5 +135,6 @@ def list_avatars() -> list[dict]:
         with open(path) as f:
             data = json.load(f)
             return [{"id": k, **v} for k, v in data.items()]
-    except (json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError) as e:
+        logging.warning("list_avatars: failed to load avatars from %s: %s", path, e)
         return []
