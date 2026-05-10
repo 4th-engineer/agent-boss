@@ -10,3 +10,4 @@
 | 2026-05-10 | AgentBoss  | 修复 unassigned_agents() 逻辑：改用 main.members 而非 _agents 作为真相源 | 中：修复 room_manager 核心查找逻辑 |
 | 2026-05-10 | AgentBoss  | 修复 list_avatars() 静默失败：添加 logging.warning 记录 JSON/OSError | 低：调试可追溯性提升 |
 | 2026-05-10 | AgentBoss  | 移除 theme.py 中未使用的 `import os` | 低：清理死代码 |
+| 2026-05-10 | AgentBoss  | 缩小 PtyProcess.write/resize 中的 bare Exception 为具体类型 (OSError, ValueError, TypeError) | 中：防止编程错误被静默吞掉 |
