@@ -36,4 +36,5 @@
 
 | 2026-05-11 | AgentBoss  | window.py: 添加 `logger = getLogger(__name__)` — 之前唯一没有 logger 的模块；_restore_sessions 添加 try/except — 单个 session 恢复失败不再阻止其余 session 加载，日志可见 | 中：修复启动时 session 恢复级联失败导致部分数据静默丢失 |
 | 2026-05-11 | AgentBoss  | terminal.py ANSI parser: 3组重复 elif 链 (fg 30-37, bg 40-47, bright fg 90-97) → dict lookup `_STD_FG/_BRIGHT_FG/_STD_BG`；O(1) 查找替代 O(n) 线性分支，parser 路径缩短 ~40 行 | 中：消除重复代码，解析器可维护性提升，性能微增 |
+| 2026-05-11 | AgentBoss  | tabs.py create_tab: wrap addTab+_tab_widgets assignment in try/except — DB session创建失败时正确清理已addTab的TerminalWidget，防止orphan widget残留+QTabWidget关闭时double-remove_session报错 | 中：修复资源泄漏 + DB二次删除异常 |
 
