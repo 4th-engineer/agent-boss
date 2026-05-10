@@ -71,9 +71,13 @@ class PtyReader(QThread):
                         break
                 else:
                     # winpty path - no fd-based select, just poll
-                    data = proc.read()
-                    if data:
-                        self.output_ready.emit(data)
+                    try:
+                        data = proc.read()
+                        if data:
+                            self.output_ready.emit(data)
+                    except (OSError, ValueError, RuntimeError) as e:
+                        logger.warning("PtyReader read error (winpty): %s", e)
+                        break
                     QThread.msleep(50)
 
     def stop(self):
