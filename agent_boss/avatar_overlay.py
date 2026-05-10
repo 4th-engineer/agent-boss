@@ -43,7 +43,7 @@ class AvatarOverlay(QWidget):
                     self._sprite = self._avatar_data.get("sprite", [])
                     self._colors = self._avatar_data.get("colors", {})
                     return
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.warning("Failed to load avatar %s: %s", avatar_id, e)
 
         # Fallback to default avatar
