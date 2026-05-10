@@ -122,7 +122,7 @@ class ProcessManager:
                 return self._create_windows_process(tab_id, rows, cols)
             else:
                 return self._create_unix_process(tab_id, rows, cols)
-        except Exception as e:
+        except (OSError, ValueError) as e:
             logger.error("Failed to create PTY process", exc_info=e)
             return None
 
@@ -169,7 +169,7 @@ class ProcessManager:
             process = PtyProcess(winpty_process=pt)
             self._processes[tab_id] = process
             return process
-        except Exception as e:
+        except (OSError, ValueError) as e:
             logger.error("Failed to create winpty process", exc_info=e)
             return None
 
