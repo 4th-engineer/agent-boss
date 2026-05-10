@@ -20,7 +20,9 @@
 | 2026-05-10 | AgentBoss  | worlds/map_view.py: MapView.mousePressEvent now calls event.accept() after RoomItem/AgentNode click — fixes double-fire bug where child item click propagated to parent, emitting signals twice | 中：修复 world map 点击时信号重复触发的竞态/传播问题 |
 | 2026-05-10 | AgentBoss  | 移除 theme.py 中未使用的 self._app = app（ThemeManager 构造函数中的死代码） | 低：清理无用实例变量，减小对象内存占用 |
 | 2026-05-10 | AgentBoss  | tabs.py: _on_tab_close 三个操作全部包 try/except — remove_process/remove_session/cleanup 任意失败不再导致部分清理 + 静默资源泄漏 | 中：关闭标签页时的进程/DB/Widget 资源泄漏问题修复 |
-| 2026-05-11 | AgentBoss  | .gitignore: add *.bak + 删除已被追踪的 __init__.py.bak — 防止备份文件混入 git | 中：清理历史遗留垃圾文件 |
+| 2026-05-11 | AgentBoss  | terminal.py: ANSI 256-color parser — add ValueError guard + bounds check for color index before _xterm256 lookup; prevents IndexError from malformed escape sequences (e.g. \x1b[38;5;999m) | 中：防终端输出非法颜色代码导致 Qt 事件循环崩溃 |
+
+
 | 2026-05-11 | AgentBoss  | tabs.py close_all_tabs: 添加 try/except + iteration guard — 防止 _on_tab_close 异常导致无限循环；之前无保护 | 中：关闭所有标签时防止应用冻结 |
 | 2026-05-11 | AgentBoss  | terminal.py: remove super().cleanup() — QWidget has no cleanup() method, every tab close raised AttributeError (被 tabs.py try/except 掩盖) | 中：修复每次关闭标签时的异常泄漏 |
 | 2026-05-11 | AgentBoss  | terminal.py: PtyReader winpty 分支注释澄清 msleep(50) 的作用是防止 CPU 空转，与 Linux 分支 selector.select 行为对齐 | 中：Windows PTY 性能优化 |
