@@ -102,7 +102,8 @@ class PtyReader(QThread):
                     QThread.msleep(50)
 
     def stop(self):
-        self._running = False
+        with self._lock:
+            self._running = False
 
 
 class TerminalWidget(QWidget):
