@@ -292,13 +292,19 @@ class TerminalWidget(QWidget):
                                 try:
                                     color_idx = int(codes[i])
                                 except ValueError:
+                                    logger.warning("ANSI parser: malformed 256-color foreground code %r at pos %d", codes[i], i)
                                     i += 1
                                     continue
                                 if 0 <= color_idx < len(_xterm256):
                                     current_format.setForeground(QColor(_xterm256[color_idx]))
                                 i += 1
                             elif mode == "2" and i + 2 < len(codes):
-                                r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                try:
+                                    r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                except ValueError:
+                                    logger.warning("ANSI parser: malformed 24-bit foreground RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
+                                    i += 3
+                                    continue
                                 i += 3
                                 current_format.setForeground(QColor(r, g, b))
                     # ── Extended background: 48;5;N or 48;2;R;G;B ───────────
@@ -310,13 +316,19 @@ class TerminalWidget(QWidget):
                                 try:
                                     color_idx = int(codes[i])
                                 except ValueError:
+                                    logger.warning("ANSI parser: malformed 256-color background code %r at pos %d", codes[i], i)
                                     i += 1
                                     continue
                                 if 0 <= color_idx < len(_xterm256):
                                     current_format.setBackground(QColor(_xterm256[color_idx]))
                                 i += 1
                             elif mode == "2" and i + 2 < len(codes):
-                                r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                try:
+                                    r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                except ValueError:
+                                    logger.warning("ANSI parser: malformed 24-bit background RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
+                                    i += 3
+                                    continue
                                 i += 3
                                 current_format.setBackground(QColor(r, g, b))
             else:
