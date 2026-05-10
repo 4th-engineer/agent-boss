@@ -115,8 +115,10 @@ class MapView(QGraphicsView):
         item = self.itemAt(event.pos())
         if isinstance(item, RoomItem):
             self.room_clicked.emit(item.get_room_id())
+            event.accept()
         elif isinstance(item, AgentNode):
             self.agent_clicked.emit(item.agent_id)
+            event.accept()
         super().mousePressEvent(event)
 
 
