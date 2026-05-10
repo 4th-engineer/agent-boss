@@ -11,4 +11,4 @@
 | 2026-05-10 | AgentBoss  | 修复 list_avatars() 静默失败：添加 logging.warning 记录 JSON/OSError | 低：调试可追溯性提升 |
 | 2026-05-10 | AgentBoss  | 移除 theme.py 中未使用的 `import os` | 低：清理死代码 |
 | 2026-05-10 | AgentBoss  | 缩小 PtyProcess.write/resize 中的 bare Exception 为具体类型 (OSError, ValueError, TypeError) | 中：防止编程错误被静默吞掉 |
-| 2026-05-10 | AgentBoss  | terminal.py cleanup: 改用 logger.warning 替代裸 logging.warning（统一 %-format 项目规范） | 低：代码风格一致性 |
+| 2026-05-10 | AgentBoss  | terminal.py adopts logger = getLogger(__name__) pattern (replaces bare logging.warning calls) | 中：统一项目日志规范 |
