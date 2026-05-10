@@ -29,4 +29,5 @@
 | 2026-05-11 | AgentBoss  | database.py: update_session — 3-branch if/elif/else 合并为 1 条 COALESCE UPDATE，DB 往返从 2-3 次降至 1 次 | 中：高频函数性能优化，session 刷新延迟降低 |
 | 2026-05-11 | AgentBoss  | terminal.py: 修复 _xterm256 grayscale range off-by-one — `range(8,0xEE+1,10)` 缺最后一格致灰度 232-255 仅 23 色；改为 `range(8,0xF0,10)` 覆盖全部 24 色 | 低：终端灰度渲染完整性，修复 `ls --color=auto` 灰度渐变断档 |
 | 2026-05-11 | AgentBoss  | terminal.py ANSI parser: 4处 bare `except ValueError`/`int()` 替换为 try/except + logging.warning — 256-color fg/bg + 24-bit fg/bg；之前解析失败静默丢失输出，高频路径无错误可见性 | 中：ANSI 渲染错误现在有日志可追溯，不再静默丢字符 |
+| 2026-05-11 | AgentBoss  | terminal.py 24-bit RGB fg+bg 添加 `0 <= r/g/b <= 255` 校验 — 256色已有bounds-check，RGB真彩色之前缺失；无效值现在有日志warning而非未定义QColor | 中：ANSI 真彩色防无效值导致渲染未定义行为 |
 
