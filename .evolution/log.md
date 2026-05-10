@@ -32,3 +32,5 @@
 | 2026-05-11 | AgentBoss  | map_view.py: move_agent_to_room() — 修复空操作bug，更新_agent_rooms后同步移动AgentNode视觉位置；之前调用此方法只更新内部字典，地图上节点纹丝不动 | 中：World map agent 移动功能从无到有，RoomManager.assign_agent() 调用链完整 |
 | 2026-05-11 | AgentBoss  | terminal.py 24-bit RGB fg+bg 添加 `0 <= r/g/b <= 255` 校验 — 256色已有bounds-check，RGB真彩色之前缺失；无效值现在有日志warning而非未定义QColor | 中：ANSI 真彩色防无效值导致渲染未定义行为 |
 
+| 2026-05-11 | AgentBoss  | window.py: 添加 `logger = getLogger(__name__)` — 之前唯一没有 logger 的模块；_restore_sessions 添加 try/except — 单个 session 恢复失败不再阻止其余 session 加载，日志可见 | 中：修复启动时 session 恢复级联失败导致部分数据静默丢失 |
+
