@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_AVATAR = "beaver"
+_AVATARS_JSON_PATH = Path(__file__).parent / "avatars" / "avatars.json"
 
 
 class AvatarOverlay(QWidget):
@@ -33,9 +34,8 @@ class AvatarOverlay(QWidget):
 
     def _load_avatar(self, avatar_id: str):
         """Load avatar data from JSON."""
-        path = Path(__file__).parent / "avatars" / "avatars.json"
         try:
-            with open(path) as f:
+            with open(_AVATARS_JSON_PATH) as f:
                 data = json.load(f)
                 if avatar_id in data:
                     self._avatar_id = avatar_id
@@ -44,7 +44,7 @@ class AvatarOverlay(QWidget):
                     self._colors = self._avatar_data.get("colors", {})
                     return
         except (OSError, json.JSONDecodeError) as e:
-            logger.warning("Failed to load avatar %s: %s", avatar_id, e)
+            logger.warning("Failed to load avatar %s from %s: %s", avatar_id, _AVATARS_JSON_PATH, e)
 
         # Fallback to default avatar
         if avatar_id != DEFAULT_AVATAR:
@@ -130,11 +130,10 @@ class AvatarOverlay(QWidget):
 
 def list_avatars() -> list[dict]:
     """Return list of available avatars."""
-    path = Path(__file__).parent / "avatars" / "avatars.json"
     try:
-        with open(path) as f:
+        with open(_AVATARS_JSON_PATH) as f:
             data = json.load(f)
             return [{"id": k, **v} for k, v in data.items()]
     except (json.JSONDecodeError, OSError) as e:
-        logger.warning("list_avatars: failed to load avatars from %s: %s", path, e)
+        logger.warning("list_avatars: failed to load avatars from %s: %s", _AVATARS_JSON_PATH, e)
         return []
