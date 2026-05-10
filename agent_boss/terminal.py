@@ -14,6 +14,27 @@ from agent_boss.process_manager import PtyProcess
 from agent_boss.avatar_overlay import AvatarOverlay
 
 
+# ── xterm 256-color palette (ISO 8613-6 / ECMA-48) ──────────────────────────
+# Index 0-15:   standard 16 ANSI colors
+# Index 16-231: 6×6×6 RGB cube (216 colors: 16 + 36×6)
+# Index 232-255: 24 grayscale (black → white)
+_xterm256: list[str] = [
+    # 0-7: standard
+    "#000000", "#CC0000", "#4E9A06", "#C4A000",
+    "#3465A4", "#75517B", "#06989A", "#FFFFFF",
+    # 8-15: bright
+    "#555555", "#F2777A", "#9FD900", "#FEE12B",
+    "#6CB6FF", "#D397EE", "#8BD9CA", "#FFFFFF",
+    # 16-231: RGB cube
+] + [
+    f"#{r:02x}{g:02x}{b:02x}"
+    for r in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
+    for g in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
+    for b in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
+# 232-255: grayscale
+] + [f"#{i:02x}{i:02x}{i:02x}" for i in range(8, 0xEE + 1, 10)]
+
+
 class PtyReader(QThread):
     """Reads PTY output in background thread."""
 
@@ -180,25 +201,59 @@ class TerminalWidget(QWidget):
 
         for part in parts:
             if part.startswith("\x1b["):
-                codes = part[2:-1].split(";") if part[2:-1] else ["0"]
-                for code in codes:
+                codes_str = part[2:-1]
+                codes = codes_str.split(";") if codes_str else ["0"]
+                i = 0
+                while i < len(codes):
+                    code = codes[i]
+                    i += 1
+                    # ── Reset ──────────────────────────────────────────────
                     if code == "0":
-                        # Reset both foreground and background to default
                         current_format = QTextCharFormat(default_format)
                         current_format.setBackground(default_format.background())
+                    # ── Bold / Dim / Italic / Underline / Blink ──────────────
                     elif code == "1":
-                        # Bold/bright - use lighter foreground color
                         fg = current_format.foreground().color()
                         current_format.setForeground(fg.lighter(150))
+                    elif code == "2":
+                        fg = current_format.foreground().color()
+                        current_format.setForeground(fg.darker(150))
+                    elif code == "3":
+                        current_format.setFontItalic(True)
+                    elif code == "4":
+                        current_format.setFontUnderline(True)
+                    elif code == "5":
+                        pass  # slow blink – no effect in plain text
+                    elif code == "6":
+                        pass  # rapid blink – no effect in plain text
+                    # ── Reverse / Conceal / Strike ───────────────────────────
+                    elif code == "7":
+                        fg = current_format.foreground().color()
+                        bg = current_format.background().color()
+                        current_format.setForeground(bg)
+                        current_format.setBackground(fg)
+                    elif code == "8":
+                        bg = current_format.background().color()
+                        current_format.setForeground(bg)
+                    elif code == "9":
+                        current_format.setFontStrikeOut(True)
+                    # ── Bold/Dim/Italic/Underline/Blink/Reverse/Conceal/Strike OFF
                     elif code == "22":
-                        # Normal weight - reset to default foreground
                         current_format.setForeground(default_format.foreground())
+                    elif code == "23":
+                        current_format.setFontItalic(default_format.fontItalic())
                     elif code == "24":
-                        # Underline off - reset font underline
                         current_format.setFontUnderline(default_format.fontUnderline())
+                    elif code == "25":
+                        pass  # blink off
                     elif code == "27":
-                        # Strikethrough off - reset font strikeout
+                        current_format.setForeground(default_format.foreground())
+                        current_format.setBackground(default_format.background())
+                    elif code == "28":
+                        current_format.setForeground(default_format.foreground())
+                    elif code == "29":
                         current_format.setFontStrikeOut(default_format.fontStrikeOut())
+                    # ── Standard foreground (30-37, 39) ───────────────────────
                     elif code == "30": current_format.setForeground(QColor("#000000"))
                     elif code == "31": current_format.setForeground(QColor("#CC0000"))
                     elif code == "32": current_format.setForeground(QColor("#4E9A06"))
@@ -207,6 +262,8 @@ class TerminalWidget(QWidget):
                     elif code == "35": current_format.setForeground(QColor("#75517B"))
                     elif code == "36": current_format.setForeground(QColor("#06989A"))
                     elif code == "37": current_format.setForeground(QColor("#FFFFFF"))
+                    elif code == "39": current_format.setForeground(default_format.foreground())
+                    # ── Bright foreground (90-97) ─────────────────────────────
                     elif code == "90": current_format.setForeground(QColor("#555555"))
                     elif code == "91": current_format.setForeground(QColor("#F2777A"))
                     elif code == "92": current_format.setForeground(QColor("#9FD900"))
@@ -215,7 +272,7 @@ class TerminalWidget(QWidget):
                     elif code == "95": current_format.setForeground(QColor("#D397EE"))
                     elif code == "96": current_format.setForeground(QColor("#8BD9CA"))
                     elif code == "97": current_format.setForeground(QColor("#FFFFFF"))
-                    # Background colors (40-49)
+                    # ── Standard background (40-47, 49) ───────────────────────
                     elif code == "40": current_format.setBackground(QColor("#000000"))
                     elif code == "41": current_format.setBackground(QColor("#CC0000"))
                     elif code == "42": current_format.setBackground(QColor("#4E9A06"))
@@ -224,7 +281,33 @@ class TerminalWidget(QWidget):
                     elif code == "45": current_format.setBackground(QColor("#75517B"))
                     elif code == "46": current_format.setBackground(QColor("#06989A"))
                     elif code == "47": current_format.setBackground(QColor("#FFFFFF"))
-                    elif code == "49": current_format.setBackground(QColor("#1E1E1E"))
+                    elif code == "49": current_format.setBackground(default_format.background())
+                    # ── Extended foreground: 38;5;N (256-color) or 38;2;R;G;B (24-bit)
+                    elif code == "38":
+                        if i < len(codes):
+                            mode = codes[i]
+                            i += 1
+                            if mode == "5" and i < len(codes):
+                                color_idx = int(codes[i])
+                                i += 1
+                                current_format.setForeground(QColor(_xterm256[color_idx]))
+                            elif mode == "2" and i + 2 < len(codes):
+                                r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                i += 3
+                                current_format.setForeground(QColor(r, g, b))
+                    # ── Extended background: 48;5;N or 48;2;R;G;B ───────────
+                    elif code == "48":
+                        if i < len(codes):
+                            mode = codes[i]
+                            i += 1
+                            if mode == "5" and i < len(codes):
+                                color_idx = int(codes[i])
+                                i += 1
+                                current_format.setBackground(QColor(_xterm256[color_idx]))
+                            elif mode == "2" and i + 2 < len(codes):
+                                r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
+                                i += 3
+                                current_format.setBackground(QColor(r, g, b))
             else:
                 if part and part.strip():
                     cursor.setCharFormat(current_format)
