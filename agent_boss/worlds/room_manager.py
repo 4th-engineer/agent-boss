@@ -1,7 +1,10 @@
 """Room/World manager for agent grouping."""
 import json
+import logging
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 class Room:
@@ -47,21 +50,27 @@ class RoomManager:
         """Load rooms from JSON file."""
         path = self._get_rooms_path()
         if path.exists():
-            with open(path) as f:
-                data = json.load(f)
-                for room_data in data.values():
-                    room = Room.from_dict(room_data)
-                    self._rooms[room.id] = room
-                    # Rebuild agent->room mapping
-                    for member in room.members:
-                        self._agents[member] = room.id
+            try:
+                with open(path) as f:
+                    data = json.load(f)
+                    for room_data in data.values():
+                        room = Room.from_dict(room_data)
+                        self._rooms[room.id] = room
+                        # Rebuild agent->room mapping
+                        for member in room.members:
+                            self._agents[member] = room.id
+            except (OSError, json.JSONDecodeError) as e:
+                logger.warning("Failed to load rooms from %s: %s — using empty room list", path, e)
 
     def _save_rooms(self):
         """Save rooms to JSON file."""
         path = self._get_rooms_path()
         data = {rid: room.to_dict() for rid, room in self._rooms.items()}
-        with open(path, "w") as f:
-            json.dump(data, f, indent=2)
+        try:
+            with open(path, "w") as f:
+                json.dump(data, f, indent=2)
+        except OSError as e:
+            logger.warning("Failed to save rooms to %s: %s", path, e)
 
     def list_rooms(self) -> list[dict]:
         """Return list of all rooms."""
