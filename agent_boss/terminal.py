@@ -1,4 +1,5 @@
 """Cross-platform terminal widget with PTY support."""
+import logging
 import re
 import sys
 import select as selector
@@ -47,7 +48,7 @@ class PtyReader(QThread):
                                 break
                     except (OSError, ValueError, RuntimeError) as e:
                         # Unexpected error in selector - process may have closed
-                        print(f"PtyReader select error: {e}")
+                        logging.warning(f"PtyReader select error: {e}")
                         break
             else:
                 # Fallback for other platforms (e.g. other Unix, or Windows with winpty)
@@ -64,7 +65,7 @@ class PtyReader(QThread):
                             if data:
                                 self.output_ready.emit(data)
                     except (OSError, ValueError, RuntimeError) as e:
-                        print(f"PtyReader select error: {e}")
+                        logging.warning(f"PtyReader select error: {e}")
                         break
                 else:
                     # winpty path - no fd-based select, just poll
@@ -271,7 +272,7 @@ class TerminalWidget(QWidget):
                 self._reader.terminate()
                 # Ensure thread terminates after forceful termination
                 if not self._reader.wait(500):
-                    print("Warning: PtyReader thread did not terminate cleanly")
+                    logging.warning("PtyReader thread did not terminate cleanly")
             self._reader.deleteLater()
             del self._reader
         if self._process:
