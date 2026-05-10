@@ -39,10 +39,17 @@ class TabManager(QTabWidget):
             return None
 
         terminal = TerminalWidget(process, self)
-        index = self.addTab(terminal, title)
-        self._tab_widgets[tab_id] = terminal
-        self.setCurrentIndex(index)
-        return tab_id
+        try:
+            index = self.addTab(terminal, title)
+            self._tab_widgets[tab_id] = terminal
+            self.setCurrentIndex(index)
+            return tab_id
+        except Exception:
+            # DB session creation failed — clean up orphan widget before re-raising
+            self.removeTab(self.indexOf(terminal))
+            terminal.cleanup()
+            terminal.deleteLater()
+            raise
 
     def get_current_terminal(self):
         index = self.currentIndex()
