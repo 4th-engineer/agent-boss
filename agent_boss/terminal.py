@@ -7,7 +7,7 @@ import sys
 import select as selector
 import threading
 from PySide6.QtWidgets import QTextEdit, QWidget, QVBoxLayout, QApplication
-from PySide6.QtCore import Qt, QThread, Signal, Property
+from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont, QKeyEvent
 
 from agent_boss.process_manager import PtyProcess
