@@ -37,4 +37,5 @@
 | 2026-05-11 | AgentBoss  | tabs.py create_tab: wrap addTab+_tab_widgets assignment in try/except — DB session创建失败时正确清理已addTab的TerminalWidget，防止orphan widget残留+QTabWidget关闭时double-remove_session报错 | 中：修复资源泄漏 + DB二次删除异常 |
 | 2026-05-11 | AgentBoss  | tabs.py create_tab: 替换 bare `except Exception:` 为 `logger.error` + best-effort cleanup — 之前异常被吞无日志，cleanup 操作本身失败也会掩盖根因 | 中：tab 创建失败现在有日志追溯，cleanup 失败不再掩盖原始错误 |
 | 2026-05-11 | AgentBoss | map_view.py: 移除未使用的 `QGraphicsItem` 导入 — 死代码清理 | 低：减小模块加载开销，提高代码可读性 |
+| 2026-05-11 | AgentBoss | database.py init_db: 拆分 `except (sqlite3.Error, RuntimeError)` 为 `except OSError` + `except RuntimeError`，各自独立 log message — 运行时行为不变，诊断信息更精确 | 低：异常日志诊断精度提升，代码可读性改善 |
 
