@@ -1,4 +1,6 @@
 """Map view widget showing rooms and agents."""
+import logging
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QScrollArea, QGraphicsView, QGraphicsScene,
@@ -6,6 +8,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal, QRectF
 from PySide6.QtGui import QBrush, QColor, QPen, QFont, QPainter
+
+logger = logging.getLogger(__name__)
 
 
 class RoomItem(QGraphicsRectItem):
@@ -177,6 +181,7 @@ class MapWidget(QWidget):
     def refresh_map(self):
         """Refresh the map with current room/agent data."""
         if not self._room_manager:
+            logger.warning("refresh_map called with no room_manager set — skipping")
             return
 
         self._map_view.clear_map()
@@ -184,12 +189,15 @@ class MapWidget(QWidget):
         # Add rooms
         rooms = self._room_manager.list_rooms()
         positions = [(50, 50), (220, 50), (50, 180), (220, 180)]
-        for i, room in enumerate(rooms):
-            x, y = positions[i] if i < len(positions) else (50 + i * 170, 50)
-            self._map_view.add_room(
-                room["id"], room["name"], room["color"], x, y,
-                len(room.get("members", []))
-            )
+        try:
+            for i, room in enumerate(rooms):
+                x, y = positions[i] if i < len(positions) else (50 + i * 170, 50)
+                self._map_view.add_room(
+                    room["id"], room["name"], room["color"], x, y,
+                    len(room.get("members", []))
+                )
+        except Exception as e:
+            logger.error("refresh_map: failed to populate rooms — %s", e)
 
     def get_map_view(self) -> MapView:
         return self._map_view
