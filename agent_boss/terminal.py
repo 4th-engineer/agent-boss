@@ -289,9 +289,14 @@ class TerminalWidget(QWidget):
                             mode = codes[i]
                             i += 1
                             if mode == "5" and i < len(codes):
-                                color_idx = int(codes[i])
+                                try:
+                                    color_idx = int(codes[i])
+                                except ValueError:
+                                    i += 1
+                                    continue
+                                if 0 <= color_idx < len(_xterm256):
+                                    current_format.setForeground(QColor(_xterm256[color_idx]))
                                 i += 1
-                                current_format.setForeground(QColor(_xterm256[color_idx]))
                             elif mode == "2" and i + 2 < len(codes):
                                 r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
                                 i += 3
@@ -302,9 +307,14 @@ class TerminalWidget(QWidget):
                             mode = codes[i]
                             i += 1
                             if mode == "5" and i < len(codes):
-                                color_idx = int(codes[i])
+                                try:
+                                    color_idx = int(codes[i])
+                                except ValueError:
+                                    i += 1
+                                    continue
+                                if 0 <= color_idx < len(_xterm256):
+                                    current_format.setBackground(QColor(_xterm256[color_idx]))
                                 i += 1
-                                current_format.setBackground(QColor(_xterm256[color_idx]))
                             elif mode == "2" and i + 2 < len(codes):
                                 r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
                                 i += 3
