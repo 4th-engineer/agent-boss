@@ -48,7 +48,7 @@ class PtyReader(QThread):
                                 break
                     except (OSError, ValueError, RuntimeError) as e:
                         # Unexpected error in selector - process may have closed
-                        logging.warning(f"PtyReader select error: {e}")
+                        logging.warning("PtyReader select error: %s", e)
                         break
             else:
                 # Fallback for other platforms (e.g. other Unix, or Windows with winpty)
@@ -65,7 +65,7 @@ class PtyReader(QThread):
                             if data:
                                 self.output_ready.emit(data)
                     except (OSError, ValueError, RuntimeError) as e:
-                        logging.warning(f"PtyReader select error: {e}")
+                        logging.warning("PtyReader select error: %s", e)
                         break
                 else:
                     # winpty path - no fd-based select, just poll
