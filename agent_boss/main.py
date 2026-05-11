@@ -4,6 +4,12 @@ import sys
 from PySide6.QtWidgets import QApplication
 from .window import MainWindow
 
+# Configure logging once at application start — all modules inherit this setup.
+# Default: WARNING+ to stderr (visible in dev); set AGENTBOSS_LOG=info/debug to enable.
+_log_level = getattr(logging, (sys.environ.get("AGENTBOSS_LOG") or "warning").upper(), "WARNING")
+_log_fmt = "%(name)s [%(levelname)s] %(message)s"
+logging.basicConfig(level=_log_level, format=_log_fmt, stream=sys.stderr)
+
 logger = logging.getLogger(__name__)
 
 
