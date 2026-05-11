@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QPushButton, QScrollArea, QGraphicsView, QGraphicsScene,
     QGraphicsRectItem, QGraphicsTextItem
 )
-from PySide6.QtCore import Qt, Signal, QRectF
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QBrush, QColor, QPen, QFont, QPainter
 
 logger = logging.getLogger(__name__)
