@@ -76,21 +76,21 @@ class MapView(QGraphicsView):
         self._agent_items: dict[str, AgentNode] = {}
         self._agent_rooms: dict[str, str] = {}  # agent_id -> room_id
 
-    def clear_map(self):
+    def clear_map(self) -> None:
         """Clear all items from the map."""
         self._scene.clear()
         self._room_items.clear()
         self._agent_items.clear()
         self._agent_rooms.clear()
 
-    def add_room(self, room_id: str, name: str, color: str, x: float, y: float, member_count: int = 0):
+    def add_room(self, room_id: str, name: str, color: str, x: float, y: float, member_count: int = 0) -> None:
         """Add a room to the map."""
         room = RoomItem(room_id, name, color, member_count)
         room.setRect(x, y, 150, 100)
         self._scene.addItem(room)
         self._room_items[room_id] = room
 
-    def add_agent(self, agent_id: str, avatar: str, room_id: str):
+    def add_agent(self, agent_id: str, avatar: str, room_id: str) -> None:
         """Add an agent node to a room."""
         if room_id not in self._room_items:
             return
@@ -106,7 +106,7 @@ class MapView(QGraphicsView):
         self._agent_items[agent_id] = agent
         self._agent_rooms[agent_id] = room_id
 
-    def move_agent_to_room(self, agent_id: str, room_id: str):
+    def move_agent_to_room(self, agent_id: str, room_id: str) -> None:
         """Move an agent to a different room."""
         if agent_id not in self._agent_items or room_id not in self._room_items:
             return
