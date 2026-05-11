@@ -71,3 +71,4 @@
 
 | 2026-05-12 | 🤖 Self-evolution: terminal.py PtyReader winpty branch — add AttributeError to exception tuple alongside (OSError, ValueError, RuntimeError); AttributeError occurs when cleanup() races to nullify _winpty_process between proc capture under lock and read() call; previously uncaught exception would propagate into Qt event loop on Windows | 中：Windows PTY 竞态崩溃修复，reader 线程不再泄漏未捕获异常 |
 | 2026-05-12 | AgentBoss | terminal.py PtyReader winpty 分支：proc.read() 异常从 logger.warning → logger.error；proc.read() 失败意味着 reader 线程永久停止，ERROR 级别符合项目规范 | 低：日志级别修正，关键失败日志对齐项目标准 |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — add exc_info=True to avatar load failure log; aligns with project-wide exception-logging standard (process_manager/database/tabs/window 全部已统一)，avatar 加载失败现在有完整 traceback 可追溯 | 低：avatar_selector 异常追溯规范与项目其余模块对齐 |
