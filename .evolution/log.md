@@ -45,5 +45,5 @@
 || 2026-05-11 | AgentBoss | 🤖 Self-evolution: room_manager.py — add structured logging to create_room/delete_room/assign_agent; zero observability on world state changes | 中：Worlds 系统所有状态变更操作现在有日志可追溯，调试/审计不再黑盒 |
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
-| 2026-05-11 | AgentBoss | main.py + __main__.py: add top-level Exception handler + logger; catches Qt event loop crashes that would otherwise silently terminate — logs critical with full traceback before exit | 高：启动/运行时异常不再静默消失；新增优雅关闭日志（exit_code 可追溯）|
+| 2026-05-11 | AgentBoss | terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
 
