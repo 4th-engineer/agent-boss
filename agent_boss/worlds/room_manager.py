@@ -60,7 +60,7 @@ class RoomManager:
                         for member in room.members:
                             self._agents[member] = room.id
             except (OSError, json.JSONDecodeError) as e:
-                logger.warning("Failed to load rooms from %s: %s — using empty room list", path, e)
+                logger.warning("Failed to load rooms from %s: %s — using empty room list", path, e, exc_info=True)
 
     def _save_rooms(self):
         """Save rooms to JSON file."""
@@ -70,7 +70,7 @@ class RoomManager:
             with open(path, "w") as f:
                 json.dump(data, f, indent=2)
         except OSError as e:
-            logger.warning("Failed to save rooms to %s: %s", path, e)
+            logger.warning("Failed to save rooms to %s: %s", path, e, exc_info=True)
 
     def list_rooms(self) -> list[dict]:
         """Return list of all rooms."""
