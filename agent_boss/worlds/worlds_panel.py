@@ -67,8 +67,14 @@ class WorldsPanel(QWidget):
     def _on_room_selected(self, room_id: str):
         """Handle room click."""
         room = self._room_manager.get_room(room_id)
-        if room and room.members:
-            self._detail_panel.set_agent(room.members[0], room=room_id)
+        if not room:
+            logger.warning("_on_room_selected: room %s not found", room_id)
+            return
+        if not room.members:
+            logger.warning("_on_room_selected: room %s has no members — clearing detail panel", room_id)
+            self._detail_panel.set_agent(None, room=room_id)
+            return
+        self._detail_panel.set_agent(room.members[0], room=room_id)
 
     def _on_agent_selected(self, agent_id: str):
         """Handle agent click."""
