@@ -35,8 +35,8 @@ class AvatarSelector(QDialog):
 
         try:
             avatars = list_avatars()
-        except Exception as e:
-            logger.warning("Failed to load avatars for selector — showing empty grid: %s", e, exc_info=True)
+        except (OSError, json.JSONDecodeError):
+            logger.warning("Failed to load avatars for selector — showing empty grid", exc_info=True)
             avatars = []
         for i, avatar in enumerate(avatars):
             row = i // 3
