@@ -26,7 +26,7 @@ def get_connection() -> sqlite3.Connection:
             _thread_local.conn = sqlite3.connect(DB_PATH, check_same_thread=False)
             _thread_local.conn.row_factory = sqlite3.Row
         except sqlite3.Error as e:
-            logger.error("Failed to open database at %s: %s", DB_PATH, e)
+            logger.error("Failed to open database at %s: %s", DB_PATH, e, exc_info=True)
             raise
     return _thread_local.conn
 
@@ -60,10 +60,10 @@ def init_db():
     except OSError as e:
         # sqlite3.Error is a subclass of OSError, covers path/permission/IO failures
         # RuntimeError covers schema verification failure
-        logger.error("Database initialization failed: %s", e)
+        logger.error("Database initialization failed: %s", e, exc_info=True)
         raise
     except RuntimeError as e:
-        logger.error("Database schema verification failed: %s", e)
+        logger.error("Database schema verification failed: %s", e, exc_info=True)
         raise
 
 
