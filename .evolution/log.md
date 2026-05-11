@@ -44,7 +44,7 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — remove unused QRectF import (dead code cleanup) | 低：模块加载微优化 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — replace hardcoded 4-room positions with responsive grid layout; fixes room overlap/viewport overflow for 5+ worlds/agents users | 中：Worlds 系统扩展性修复，5+ room 不再重叠溢出 |
 
-| 2026-05-11 | AgentBoss | 🤖 Self-evolution: room_manager.py — add structured logging to create_room/delete_room/assign_agent; zero observability on world state changes | 中：Worlds 系统所有状态变更操作现在有日志可追溯，调试/审计不再黑盒 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — remove unused QTextEdit import (dead code cleanup) | 低：模块加载微优化，减小 PySide6 import 链开销 |
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
 | 2026-05-11 | AgentBoss | terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
