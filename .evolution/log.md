@@ -52,4 +52,4 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: avatar_overlay.py — remove unused QLabel + QPoint imports (dead code cleanup) | 低：减小 PySide6 import 链开销，模块加载微优化 |
 | 2026-05-11 | AgentBoss | process_manager.py: 9处 exc_info=e → exc_info=True；write/read/resize/winpty分支/signal kill/waitpid/close master_fd/create_process — 所有错误日志现在输出完整 traceback 而非仅字符串 repr，生产调试能力大幅提升 | 中：生产环境异常追溯能力，堆栈信息完整 |
-
+| 2026-05-11 | AgentBoss | 🐛 Self-evolution: tabs.py create_tab — 修复异常时 orphan session 泄漏；create_tab 失败时 tab 已写入 DB 但 widget 清理后未调用 remove_session，导致 _restore_sessions 重启时重试必然失败记录；现在 cleanup 路径新增 remove_session(tab_id) | 中：修复 session 级联失败累积问题，DB 不再积累垃圾记录 |
