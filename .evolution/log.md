@@ -76,3 +76,4 @@
 
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py — flatten PtyReader.run() dual-branch duplication; `if master_fd → select()` else → winpty poll; eliminates 21-line redundant code path for non-Linux/macOS Unix platforms | 中：代码去重 + 逻辑简化，reader 线程控制流更清晰 |
 || 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add explicit guards for missing rooms / empty member lists; silent no-op replaced with WARNING logs + panel clear | 低：Worlds Panel 选择空房间或无效房间时不再静默无响应，日志可见 |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: room_manager.py — fix delete_room stale-agent bug; migrated agents now always update _agents mapping + deleted room members list cleared + logger.info reports migration count | 中：修复删除房间后 agent 数据不一致问题，_agents mapping 总被更新，被删房间 members 列表清空防止脏数据 |
