@@ -129,7 +129,6 @@ class TerminalWidget(QWidget):
         self._avatar_id = avatar_id
         self._setup_ui()
         self._start_reader()
-        self._setup_avatar()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
@@ -150,11 +149,6 @@ class TerminalWidget(QWidget):
         # Avatar overlay
         self._avatar = AvatarOverlay(self, self._avatar_id)
         self._avatar.hide()  # Hidden by default, toggle with method
-
-    def _setup_avatar(self):
-        """Position avatar in corner."""
-        # Will be repositioned when terminal is shown
-        pass
 
     def resizeEvent(self, event):
         """Reposition avatar when terminal resizes."""
