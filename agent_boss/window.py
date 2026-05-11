@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
                 self._tab_manager.create_tab(title=title, working_dir=working_dir)
                 restored += 1
             except Exception as e:
-                logger.warning("Failed to restore session %s (%s): %s — skipping", tab_id, title, e)
+                logger.warning("Failed to restore session %s (%s): %s — skipping", tab_id, title, e, exc_info=True)
         if restored > 0:
             logger.info("Restored %d session(s) from database", restored)
 

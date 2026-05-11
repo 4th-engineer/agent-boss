@@ -93,18 +93,18 @@ class TabManager(QTabWidget):
             try:
                 self._process_manager.remove_process(tab_id)
             except Exception as e:
-                logger.warning("Failed to remove process for tab %s: %s — leaking process", tab_id, e)
+                logger.warning("Failed to remove process for tab %s: %s — leaking process", tab_id, e, exc_info=True)
             try:
                 remove_session(tab_id)
             except Exception as e:
-                logger.warning("Failed to remove session %s from DB: %s", tab_id, e)
+                logger.warning("Failed to remove session %s from DB: %s", tab_id, e, exc_info=True)
             del self._tab_widgets[tab_id]
 
         self.removeTab(index)
         try:
             widget.cleanup()
         except Exception as e:
-            logger.warning("Failed to cleanup widget for tab %s: %s", tab_id, e)
+            logger.warning("Failed to cleanup widget for tab %s: %s", tab_id, e, exc_info=True)
         widget.deleteLater()
 
         if self.count() == 0:
@@ -118,7 +118,7 @@ class TabManager(QTabWidget):
             try:
                 self._on_tab_close(0)
             except Exception as e:
-                logger.error("close_all_tabs: failed to close tab at index 0: %s — aborting cleanup", e)
+                logger.error("close_all_tabs: failed to close tab at index 0: %s — aborting cleanup", e, exc_info=True)
                 break
             iterations += 1
 
