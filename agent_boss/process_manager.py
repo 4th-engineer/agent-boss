@@ -96,8 +96,9 @@ class PtyProcess:
             # Reap zombie process to prevent resource leaks
             try:
                 os.waitpid(self._pid, os.WNOHANG)
-            except (OSError, ChildProcessError):
-                pass
+            except (OSError, ChildProcessError) as e:
+                # Child already exited or reaped; no action needed
+                logger.debug("waitpid: process already reaped (pid=%s) — ignoring", self._pid, exc_info=e)
             self._pid = None
 
 
