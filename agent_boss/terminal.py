@@ -78,60 +78,39 @@ class PtyReader(QThread):
                 if self._process is None or self._process.is_closed:
                     break
                 proc = self._process
-            if sys.platform in ("linux", "darwin"):
-                master_fd = proc.master_fd
-                if master_fd is not None:
-                    try:
-                        ready, _, _ = selector.select([master_fd], [], [], 0.05)
-                        if ready:
-                            with self._lock:
-                                if self._process is None or self._process.is_closed:
-                                    break
-                                proc = self._process
-                            data = proc.read()
-                            if data:
-                                self.output_ready.emit(data)
-                        # Check if process closed during select
+            master_fd = proc.master_fd
+            if master_fd is not None:
+                # Linux/macOS/BSD/Solaris — use select() on PTY master fd
+                try:
+                    ready, _, _ = selector.select([master_fd], [], [], 0.05)
+                    if ready:
                         with self._lock:
                             if self._process is None or self._process.is_closed:
                                 break
-                    except (OSError, ValueError, RuntimeError) as e:
-                        # Unexpected error in selector - process may have closed
-                        logger.warning("PtyReader select error: %s", e, exc_info=True)
-                        break
-            else:
-                # Fallback for other platforms (e.g. other Unix, or Windows with winpty)
-                with self._lock:
-                    if self._process is None or self._process.is_closed:
-                        break
-                    proc = self._process
-                master_fd = proc.master_fd
-                if master_fd is not None:
-                    try:
-                        ready, _, _ = selector.select([master_fd], [], [], 0.05)
-                        if ready:
-                            with self._lock:
-                                if self._process is None or self._process.is_closed:
-                                    break
-                                proc = self._process
-                            data = proc.read()
-                            if data:
-                                self.output_ready.emit(data)
-                    except (OSError, ValueError, RuntimeError) as e:
-                        logger.warning("PtyReader select error: %s", e, exc_info=True)
-                        break
-                else:
-                    # winpty path - no fd-based select, poll with short sleep to avoid CPU spin
-                    try:
+                            proc = self._process
                         data = proc.read()
                         if data:
                             self.output_ready.emit(data)
-                    except (OSError, ValueError, RuntimeError, AttributeError) as e:
-                        # AttributeError: _winpty_process was set to None by cleanup()
-                        # racing between proc capture and read() call
-                        logger.error("PtyReader read error (winpty): %s", e, exc_info=True)
-                        break
-                    QThread.msleep(50)
+                    # Check if process closed during select
+                    with self._lock:
+                        if self._process is None or self._process.is_closed:
+                            break
+                except (OSError, ValueError, RuntimeError) as e:
+                    # Unexpected error in selector - process may have closed
+                    logger.warning("PtyReader select error: %s", e, exc_info=True)
+                    break
+            else:
+                # winpty path (Windows) — no fd-based select, poll with short sleep to avoid CPU spin
+                try:
+                    data = proc.read()
+                    if data:
+                        self.output_ready.emit(data)
+                except (OSError, ValueError, RuntimeError, AttributeError) as e:
+                    # AttributeError: _winpty_process was set to None by cleanup()
+                    # racing between proc capture and read() call
+                    logger.error("PtyReader read error (winpty): %s", e, exc_info=True)
+                    break
+                QThread.msleep(50)
 
     def stop(self):
         with self._lock:
