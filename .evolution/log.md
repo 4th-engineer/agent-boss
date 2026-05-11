@@ -53,8 +53,8 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: tabs.py — 2 bare `except Exception: pass` in create_tab cleanup path now log full traceback with exc_info=True; aligns with project error-logging standard (其他模块已统一) | 低：cleanup 失败从此有日志追溯，不再静默吞异常 |
 
 | 2026-05-11 | AgentBoss | process_manager.py: 9处 exc_info=e → exc_info=True；write/read/resize/winpty分支/signal kill/waitpid/close master_fd/create_process — 所有错误日志现在输出完整 traceback 而非仅字符串 repr，生产调试能力大幅提升 | 中：生产环境异常追溯能力，堆栈信息完整 |
-|| 2026-05-11 | AgentBoss | 🐛 Self-evolution: tabs.py create_tab — 修复异常时 orphan session 泄漏；create_tab 失败时 tab 已写入 DB 但 widget 清理后未调用 remove_session，导致 _restore_sessions 重启时重试必然失败记录；现在 cleanup 路径新增 remove_session(tab_id) | 中：修复 session 级联失败累积问题，DB 不再积累垃圾记录 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: tabs.py + window.py — add exc_info=True to all session/tab cleanup warning logs (5 sites); aligns with project-wide traceback standard | 中：Tab关闭/session恢复/cleanup 现在输出完整traceback，生产调试能力对齐 process_manager/database |
+| 2026-05-11 | AgentBoss | 🐛 Self-evolution: tabs.py create_tab — 修复异常时 orphan session 泄漏；create_tab 失败时 tab 已写入 DB 但 widget 清理后未调用 remove_session，导致 _restore_sessions 重启时重试必然失败记录；现在 cleanup 路径新增 remove_session(tab_id) | 中：修复 session 级联失败累积问题，DB 不再积累垃圾记录 |
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: database.py — add exc_info=True to all error logs (3 sites); aligns with process_manager.py standard, full traceback now available for DB init/open failures | 中：生产环境 DB 异常追溯能力，堆栈信息完整 |
-
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: room_manager.py — add exc_info=True to 2 warning logs (aligns with project standard) | 低：Worlds 系统 I/O 错误现在有完整 traceback，与 process_manager/database/tabs 统一异常追溯规范 |
