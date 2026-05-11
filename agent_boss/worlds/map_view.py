@@ -200,7 +200,7 @@ class MapWidget(QWidget):
                     len(room.get("members", []))
                 )
         except Exception as e:
-            logger.error("refresh_map: failed to populate rooms — %s", e)
+            logger.error("refresh_map: failed to populate rooms — %s", e, exc_info=True)
 
     def get_map_view(self) -> MapView:
         return self._map_view
