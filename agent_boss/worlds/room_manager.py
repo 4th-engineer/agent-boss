@@ -91,6 +91,7 @@ class RoomManager:
         room = Room(room_id, name, description, color)
         self._rooms[room_id] = room
         self._save_rooms()
+        logger.info("Room created: %s (%s) — color=%s", room_id, name, color)
         return room
 
     def delete_room(self, room_id: str) -> bool:
@@ -108,12 +109,15 @@ class RoomManager:
                     self._agents[agent_id] = "main"
             del self._rooms[room_id]
             self._save_rooms()
+            logger.info("Room deleted: %s — agents migrated to main", room_id)
             return True
+        logger.warning("delete_room: room %s not found", room_id)
         return False
 
     def assign_agent(self, agent_id: str, room_id: str) -> bool:
         """Assign an agent to a room."""
         if room_id not in self._rooms:
+            logger.warning("assign_agent: room %s not found", room_id)
             return False
 
         # Remove from current room
@@ -127,6 +131,7 @@ class RoomManager:
         if agent_id not in self._rooms[room_id].members:
             self._rooms[room_id].members.append(agent_id)
         self._save_rooms()
+        logger.info("Agent %s assigned to room %s (from %s)", agent_id, room_id, current_room_id or "none")
         return True
 
     def get_agent_room(self, agent_id: str) -> Optional[str]:
