@@ -71,8 +71,9 @@ class PtyReader(QThread):
             with self._lock:
                 if self._process is None or self._process.is_closed:
                     break
+                proc = self._process
             if sys.platform in ("linux", "darwin"):
-                master_fd = self._process.master_fd
+                master_fd = proc.master_fd
                 if master_fd is not None:
                     try:
                         ready, _, _ = selector.select([master_fd], [], [], 0.05)
@@ -103,6 +104,10 @@ class PtyReader(QThread):
                     try:
                         ready, _, _ = selector.select([master_fd], [], [], 0.05)
                         if ready:
+                            with self._lock:
+                                if self._process is None or self._process.is_closed:
+                                    break
+                                proc = self._process
                             data = proc.read()
                             if data:
                                 self.output_ready.emit(data)

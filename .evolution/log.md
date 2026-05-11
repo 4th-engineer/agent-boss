@@ -67,3 +67,5 @@
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py ANSI parser — add exc_info=True to all 6 logger.warning calls (256-color fg/bg + 24-bit fg/bg malformed/out-of-range); aligns with project-wide exception-logging standard (process_manager/database/tabs/window/room_manager) | 中：ANSI 解析器错误现在输出完整 traceback，生产环境畸形转义序列调试能力与项目其余模块统一 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py eventFilter — add is_closed guard before all 14 write() calls; fixes silent no-op when PTY process has exited (Ctrl+C/arrow keys/typing all discarded with zero feedback) | 中：终端进程退出后按键无响应问题修复，与 write_input() 行为对齐 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_overlay.py — paintEvent now logs once when sprite data is missing (silent no-op replaced with WARNING + once-per-instance guard); prevents paint-cycle spam while making avatar non-render visible to operators | 低：头像精灵数据缺失时不再静默失败，WARNING日志+单次触发保护 |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: remove dead list_avatars re-export from agent_boss/avatars/__init__.py — no module ever imports this subpackage, re-export was dead code adding loading overhead and API surface confusion | 低：死代码清除，模块加载优化，公共API表面缩小 |
+
