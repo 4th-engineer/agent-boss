@@ -92,7 +92,7 @@ class PtyProcess:
                 os.kill(self._pid, signal.SIGTERM)
             except (OSError, ProcessLookupError) as e:
                 # Process may have already exited; not an error
-                logger.debug("PtyProcess close info (pid)", exc_info=True)
+                logger.debug("PtyProcess close info (pid=%s): %s", self._pid, e, exc_info=True)
             # Reap zombie process to prevent resource leaks
             try:
                 os.waitpid(self._pid, os.WNOHANG)
