@@ -120,7 +120,9 @@ class PtyReader(QThread):
                         data = proc.read()
                         if data:
                             self.output_ready.emit(data)
-                    except (OSError, ValueError, RuntimeError) as e:
+                    except (OSError, ValueError, RuntimeError, AttributeError) as e:
+                        # AttributeError: _winpty_process was set to None by cleanup()
+                        # racing between proc capture and read() call
                         logger.error("PtyReader read error (winpty): %s", e, exc_info=True)
                         break
                     QThread.msleep(50)
