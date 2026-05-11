@@ -51,13 +51,13 @@ class PtyProcess:
             try:
                 return self._winpty_process.read()
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess read error (winpty)", exc_info=e)
+                logger.error("PtyProcess read error (winpty)", exc_info=True)
                 return ""
         elif self._master_fd is not None:
             try:
                 return os.read(self._master_fd, 65536).decode("utf-8", errors="replace")
             except OSError as e:
-                logger.error("PtyProcess read error", exc_info=e)
+                logger.error("PtyProcess read error", exc_info=True)
                 return ""
         return ""
 
