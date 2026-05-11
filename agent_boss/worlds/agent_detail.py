@@ -104,3 +104,5 @@ class AgentDetailPanel(QWidget):
         if self._agent_id:
             self._cmd_input.setText(cmd)
             self._send_command()
+        else:
+            logger.warning("_quick_cmd(%r): no agent selected — command discarded", cmd)
