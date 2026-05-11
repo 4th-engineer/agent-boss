@@ -346,9 +346,21 @@ class TerminalWidget(QWidget):
         """Handle key events for terminal input."""
         if obj == self._text_edit and isinstance(event, QKeyEvent):
             key = event.key()
-            if key == Qt.Key_Escape:
-                # Allow escape to bubble up (e.g., to clear selection)
-                pass
+            modifiers = event.modifiers()
+
+            # ── Control combos ───────────────────────────────────────────────
+            if key == Qt.Key_C and modifiers & Qt.ControlModifier:
+                self._process.write("\x03")
+                return True
+            elif key == Qt.Key_V and modifiers & Qt.ControlModifier:
+                clipboard = QApplication.clipboard()
+                if clipboard:
+                    text = clipboard.text()
+                    if text:
+                        self._process.write(text)
+                return True
+
+            # ── Escape sequences for navigation / editing ─────────────────────
             elif key == Qt.Key_Return:
                 self._process.write("\n")
                 return True
@@ -361,19 +373,41 @@ class TerminalWidget(QWidget):
             elif key == Qt.Key_Delete:
                 self._process.write("\x1b[3~")
                 return True
-            elif key == Qt.Key_C and event.modifiers() & Qt.ControlModifier:
-                self._process.write("\x03")
+            elif key == Qt.Key_Escape:
+                self._process.write("\x1b")
                 return True
-            elif key == Qt.Key_V and event.modifiers() & Qt.ControlModifier:
-                clipboard = QApplication.clipboard()
-                if clipboard:
-                    text = clipboard.text()
-                    if text:
-                        self._process.write(text)
+
+            # ── Arrow keys → ANSI escape sequences ────────────────────────────
+            elif key == Qt.Key_Up:
+                self._process.write("\x1b[A")
                 return True
+            elif key == Qt.Key_Down:
+                self._process.write("\x1b[B")
+                return True
+            elif key == Qt.Key_Right:
+                self._process.write("\x1b[C")
+                return True
+            elif key == Qt.Key_Left:
+                self._process.write("\x1b[D")
+                return True
+
+            # ── Home / End / PageUp / PageDown ────────────────────────────────
+            elif key == Qt.Key_Home:
+                self._process.write("\x1b[H")
+                return True
+            elif key == Qt.Key_End:
+                self._process.write("\x1b[F")
+                return True
+            elif key == Qt.Key_PageUp:
+                self._process.write("\x1b[5~")
+                return True
+            elif key == Qt.Key_PageDown:
+                self._process.write("\x1b[6~")
+                return True
+
+            # ── Forward printable characters ───────────────────────────────────
             elif event.text():
                 char = event.text()
-                # Forward printable characters and common control sequences
                 # Only block internal Qt sequences, let terminals handle Unicode
                 if char and not char.iscntrl():
                     self._process.write(char)
@@ -382,6 +416,7 @@ class TerminalWidget(QWidget):
                 if char in ('\x01', '\x02', '\x05', '\x06'):
                     self._process.write(char)
                     return True
+
         return super().eventFilter(obj, event)
 
     def write_input(self, text: str):
