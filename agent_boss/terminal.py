@@ -121,7 +121,7 @@ class PtyReader(QThread):
                         if data:
                             self.output_ready.emit(data)
                     except (OSError, ValueError, RuntimeError) as e:
-                        logger.warning("PtyReader read error (winpty): %s", e, exc_info=True)
+                        logger.error("PtyReader read error (winpty): %s", e, exc_info=True)
                         break
                     QThread.msleep(50)
 
