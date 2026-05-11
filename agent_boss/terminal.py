@@ -31,8 +31,13 @@ _xterm256: list[str] = [
     for r in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
     for g in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
     for b in (0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF)
-# 232-255: grayscale (24 colors: 0x08..0xEE, step 10)
-] + [f"#{i:02x}{i:02x}{i:02x}" for i in range(8, 0xF0, 10)]
+# 232-255: grayscale — pre-computed as literals (range(8, 240, 10) = 8,18,…,238)
+] + [
+    "#080808", "#121212", "#1C1C1C", "#262626", "#303030", "#3A3A3A",
+    "#444444", "#4E4E4E", "#585858", "#626262", "#6C6C6C", "#767676",
+    "#808080", "#8A8A8A", "#949494", "#9E9E9E", "#A8A8A8", "#B2B2B2",
+    "#BCBCBC", "#C6C6C6", "#D0D0D0", "#DADADA", "#E4E4E4", "#EEEEEE",
+]
 
 # ANSI SGR foreground/background lookup tables
 _STD_FG: dict[str, str] = {
