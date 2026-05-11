@@ -347,6 +347,10 @@ class TerminalWidget(QWidget):
             key = event.key()
             modifiers = event.modifiers()
 
+            # Guard: skip write if process is closed (same check as write_input)
+            if not self._process or self._process.is_closed:
+                return True
+
             # ── Control combos ───────────────────────────────────────────────
             if key == Qt.Key_C and modifiers & Qt.ControlModifier:
                 self._process.write("\x03")
