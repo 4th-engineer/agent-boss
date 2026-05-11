@@ -3,9 +3,8 @@ import logging
 
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout,
-    QStatusBar, QMessageBox, QInputDialog, QLineEdit
+    QStatusBar, QInputDialog, QLineEdit
 )
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QShortcut, QKeySequence
 
 from agent_boss.tabs import TabManager
