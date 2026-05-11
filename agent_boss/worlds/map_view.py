@@ -191,7 +191,8 @@ class MapWidget(QWidget):
         if not rooms:
             return
         try:
-            cols = max(1, self._map_view.viewport().width() // 200 if self._map_view.viewport().width() > 0 else 3)
+            vp_width = self._map_view.viewport().width()
+            cols = max(1, vp_width // 200) if vp_width > 0 else 3
             for i, room in enumerate(rooms):
                 x = 50 + (i % cols) * 200
                 y = 50 + (i // cols) * 150
