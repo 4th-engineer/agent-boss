@@ -52,6 +52,12 @@ _STD_BG: dict[str, str] = {
     "40": "#000000", "41": "#CC0000", "42": "#4E9A06", "43": "#C4A000",
     "44": "#3465A4", "45": "#75517B", "46": "#06989A", "47": "#FFFFFF",
 }
+# SGR 100-107: bright background (ISO 8613-6 / ECMA-48)
+# Maps to the same palette as _BRIGHT_FG (bright foreground) per spec
+_BRIGHT_BG: dict[str, str] = {
+    "100": "#555555", "101": "#F2777A", "102": "#9FD900", "103": "#FEE12B",
+    "104": "#6CB6FF", "105": "#D397EE", "106": "#8BD9CA", "107": "#FFFFFF",
+}
 
 
 class PtyReader(QThread):
@@ -287,6 +293,9 @@ class TerminalWidget(QWidget):
                         current_format.setBackground(QColor(_STD_BG[code]))
                     elif code == "49":
                         current_format.setBackground(default_format.background())
+                    # ── Bright background (100-107) ────────────────────────────
+                    elif code in _BRIGHT_BG:
+                        current_format.setBackground(QColor(_BRIGHT_BG[code]))
                     # ── Extended foreground: 38;5;N (256-color) or 38;2;R;G;B (24-bit)
                     elif code == "38":
                         if i < len(codes):
