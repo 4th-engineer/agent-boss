@@ -68,9 +68,14 @@ class AvatarOverlay(QWidget):
         painter.fillRect(self.rect(), QColor(0, 0, 0, 0))
 
         if not self._sprite:
+            # Log once per instance when sprite data is missing — avoids paint-cycle spam
+            if not getattr(self, '_sprite_warned', False):
+                self._sprite_warned = True
+                logger.warning(
+                    "Avatar %s (id=%s) has no sprite data — avatar will not render; check avatars.json",
+                    self._avatar_data.get("name", "?"), self._avatar_id
+                )
             return
-
-        # Calculate pixel size to fit sprite in widget
         rows = len(self._sprite)
         cols = len(self._sprite[0]) if rows > 0 and self._sprite[0] else 1
         if rows == 0 or cols == 0 or self.width() == 0 or self.height() == 0:
