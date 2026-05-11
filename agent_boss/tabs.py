@@ -46,15 +46,15 @@ class TabManager(QTabWidget):
             return tab_id
         except Exception as e:
             # Tab creation failed — clean up orphan widget and DB entry before re-raising
-            logger.error("create_tab failed: %s — cleaning up orphan TerminalWidget and DB entry", e)
+            logger.error("create_tab failed: %s — cleaning up orphan TerminalWidget and DB entry", e, exc_info=True)
             try:
                 self.removeTab(self.indexOf(terminal))
             except Exception as cleanup_err:
                 logger.warning("Best-effort TerminalWidget cleanup failed during create_tab: %s", cleanup_err, exc_info=True)
             try:
                 terminal.cleanup()
-            except Exception:
-                pass
+            except Exception as cleanup_term_err:
+                logger.warning("Best-effort TerminalWidget.cleanup() failed during create_tab: %s", cleanup_term_err, exc_info=True)
             terminal.deleteLater()
             # Remove the session from DB so _restore_sessions doesn't retry a guaranteed failure
             try:
