@@ -48,7 +48,8 @@
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add missing QHBoxLayout import (fixes runtime NameError) | 高：WorldsPanel 实例化时不再报 NameError: "QHBoxLayout" 未定义，Phase 4 系统激活不再崩溃 |
-| 2026-05-11 | AgentBoss | terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: terminal.py — remove dead _setup_avatar stub; AvatarOverlay already instantiated in _setup_ui, stub was a no-op placeholder adding noise and potential confusion | 低：死代码清除，TerminalWidget 初始化路径简化 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: avatar_overlay.py — remove unused QLabel + QPoint imports (dead code cleanup) | 低：减小 PySide6 import 链开销，模块加载微优化 |
 | 2026-05-11 | AgentBoss | process_manager.py: 9处 exc_info=e → exc_info=True；write/read/resize/winpty分支/signal kill/waitpid/close master_fd/create_process — 所有错误日志现在输出完整 traceback 而非仅字符串 repr，生产调试能力大幅提升 | 中：生产环境异常追溯能力，堆栈信息完整 |
 
