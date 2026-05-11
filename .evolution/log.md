@@ -44,7 +44,8 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — remove unused QRectF import (dead code cleanup) | 低：模块加载微优化 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — replace hardcoded 4-room positions with responsive grid layout; fixes room overlap/viewport overflow for 5+ worlds/agents users | 中：Worlds 系统扩展性修复，5+ room 不再重叠溢出 |
 
-| 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — remove unused QTextEdit import (dead code cleanup) | 低：模块加载微优化，减小 PySide6 import 链开销 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — add logging.warning when _send_command is called with no agent set; silences zero-feedback command discard in Phase 4 worlds panel | 低：命令发送失败有日志可追溯，_agent_id 未设置时不再静默丢弃 |
+
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add missing QHBoxLayout import (fixes runtime NameError) | 高：WorldsPanel 实例化时不再报 NameError: "QHBoxLayout" 未定义，Phase 4 系统激活不再崩溃 |
