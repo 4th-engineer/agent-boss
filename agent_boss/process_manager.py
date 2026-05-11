@@ -37,12 +37,12 @@ class PtyProcess:
             try:
                 self._winpty_process.write(data)
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess write error", exc_info=e)
+                logger.error("PtyProcess write error", exc_info=True)
         elif self._master_fd is not None:
             try:
                 os.write(self._master_fd, data.encode("utf-8"))
             except OSError as e:
-                logger.error("PtyProcess write error", exc_info=e)
+                logger.error("PtyProcess write error", exc_info=True)
 
     def read(self) -> str:
         if self._closed:
@@ -66,12 +66,12 @@ class PtyProcess:
             try:
                 self._winpty_process.set_size(cols, rows)
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess resize error", exc_info=e)
+                logger.error("PtyProcess resize error", exc_info=True)
         elif self._master_fd is not None:
             try:
                 fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
             except OSError as e:
-                logger.error("PtyProcess resize error", exc_info=e)
+                logger.error("PtyProcess resize error", exc_info=True)
 
     def close(self):
         self._closed = True
@@ -85,20 +85,20 @@ class PtyProcess:
             try:
                 os.close(self._master_fd)
             except OSError as e:
-                logger.warning("PtyProcess close error (master_fd)", exc_info=e)
+                logger.warning("PtyProcess close error (master_fd)", exc_info=True)
             self._master_fd = None
         if self._pid is not None:
             try:
                 os.kill(self._pid, signal.SIGTERM)
             except (OSError, ProcessLookupError) as e:
                 # Process may have already exited; not an error
-                logger.debug("PtyProcess close info (pid)", exc_info=e)
+                logger.debug("PtyProcess close info (pid)", exc_info=True)
             # Reap zombie process to prevent resource leaks
             try:
                 os.waitpid(self._pid, os.WNOHANG)
             except (OSError, ChildProcessError) as e:
                 # Child already exited or reaped; no action needed
-                logger.debug("waitpid: process already reaped (pid=%s) — ignoring", self._pid, exc_info=e)
+                logger.debug("waitpid: process already reaped (pid=%s) — ignoring", self._pid, exc_info=True)
             self._pid = None
 
 
@@ -124,7 +124,7 @@ class ProcessManager:
             else:
                 return self._create_unix_process(tab_id, rows, cols)
         except (OSError, ValueError) as e:
-            logger.error("Failed to create PTY process", exc_info=e)
+            logger.error("Failed to create PTY process", exc_info=True)
             return None
 
     def _create_unix_process(self, tab_id: str, rows: int, cols: int):
@@ -171,7 +171,7 @@ class ProcessManager:
             self._processes[tab_id] = process
             return process
         except (OSError, ValueError) as e:
-            logger.error("Failed to create winpty process", exc_info=e)
+            logger.error("Failed to create winpty process", exc_info=True)
             return None
 
     def get_process(self, tab_id: str):
