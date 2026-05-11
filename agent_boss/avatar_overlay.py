@@ -3,8 +3,8 @@ import json
 import logging
 from pathlib import Path
 
-from PySide6.QtWidgets import QWidget, QLabel
-from PySide6.QtCore import Qt, QPoint
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QFont
 
 logger = logging.getLogger(__name__)
