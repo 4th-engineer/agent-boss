@@ -47,6 +47,6 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — remove unused QTextEdit import (dead code cleanup) | 低：模块加载微优化，减小 PySide6 import 链开销 |
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
-| 2026-05-11 | AgentBoss | worlds_panel.py: remove unused QHBoxLayout/QLabel/QPushButton imports — dead code cleanup, reduces PySide6 import chain overhead | 低：模块加载微优化，减小无用 import 开销 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add missing QHBoxLayout import (fixes runtime NameError) | 高：WorldsPanel 实例化时不再报 NameError: "QHBoxLayout" 未定义，Phase 4 系统激活不再崩溃 |
 | 2026-05-11 | AgentBoss | terminal.py: add arrow keys (↑↓←→) / Home / End / PageUp / PageDown support to eventFilter — previously all navigation/editing escape sequences were silently swallowed, making bash/zsh history, line editing, and terminal scrolling unusable | 高：bash/zsh 命令历史（上↑/下↓）、行内光标移动（←→/Home/End）、翻页（PageUp/PageDown）从此可用，终端核心交互功能补全 |
 
