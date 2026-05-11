@@ -79,13 +79,13 @@ class PtyProcess:
             try:
                 self._winpty_process.kill()
             except OSError as e:
-                logger.warning("PtyProcess close error (winpty)", exc_info=True)
+                logger.warning("PtyProcess close error (winpty): %s", e, exc_info=True)
             self._winpty_process = None
         if getattr(self, '_close_master_on_cleanup', False) and self._master_fd is not None:
             try:
                 os.close(self._master_fd)
             except OSError as e:
-                logger.warning("PtyProcess close error (master_fd)", exc_info=True)
+                logger.warning("PtyProcess close error (master_fd): %s", e, exc_info=True)
             self._master_fd = None
         if self._pid is not None:
             try:
