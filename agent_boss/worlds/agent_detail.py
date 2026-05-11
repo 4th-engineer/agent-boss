@@ -90,7 +90,10 @@ class AgentDetailPanel(QWidget):
     def _send_command(self):
         """Send command to agent."""
         cmd = self._cmd_input.text().strip()
-        if cmd and self._agent_id:
+        if not self._agent_id:
+            logger.warning("_send_command: no agent set — command %r discarded", cmd)
+            return
+        if cmd:
             self.command_sent.emit(self._agent_id, cmd)
             self._history_list.addItem(f"> {cmd}")
             self._history_list.scrollToBottom()
