@@ -57,3 +57,4 @@
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: database.py — add exc_info=True to all error logs (3 sites); aligns with process_manager.py standard, full traceback now available for DB init/open failures | 中：生产环境 DB 异常追溯能力，堆栈信息完整 |
 
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: room_manager.py — add exc_info=True to 2 warning logs (aligns with project standard) | 低：Worlds 系统 I/O 错误现在有完整 traceback，与 process_manager/database/tabs 统一异常追溯规范 |
