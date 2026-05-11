@@ -92,6 +92,9 @@ class AgentDetailPanel(QWidget):
         cmd = self._cmd_input.text().strip()
         if not self._agent_id:
             logger.warning("_send_command: no agent set — command %r discarded", cmd)
+            self._history_list.addItem("(no agent selected — click a room/agent first)")
+            self._history_list.scrollToBottom()
+            self._status_label.setText("Status: No agent selected")
             return
         if cmd:
             self.command_sent.emit(self._agent_id, cmd)
@@ -106,3 +109,5 @@ class AgentDetailPanel(QWidget):
             self._send_command()
         else:
             logger.warning("_quick_cmd(%r): no agent selected — command discarded", cmd)
+            self._history_list.addItem(f"(no agent selected — cannot send '{cmd}')")
+            self._history_list.scrollToBottom()
