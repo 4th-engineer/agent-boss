@@ -2,7 +2,7 @@
 import logging
 
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QSplitter, QTabWidget, QListWidget
+    QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTabWidget, QListWidget
 )
 from PySide6.QtCore import Qt
 
