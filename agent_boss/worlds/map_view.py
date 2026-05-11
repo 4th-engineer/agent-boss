@@ -186,12 +186,15 @@ class MapWidget(QWidget):
 
         self._map_view.clear_map()
 
-        # Add rooms
+        # Add rooms using a responsive grid layout — no hardcoded position limits
         rooms = self._room_manager.list_rooms()
-        positions = [(50, 50), (220, 50), (50, 180), (220, 180)]
+        if not rooms:
+            return
         try:
+            cols = max(1, self._map_view.viewport().width() // 200 if self._map_view.viewport().width() > 0 else 3)
             for i, room in enumerate(rooms):
-                x, y = positions[i] if i < len(positions) else (50 + i * 170, 50)
+                x = 50 + (i % cols) * 200
+                y = 50 + (i // cols) * 150
                 self._map_view.add_room(
                     room["id"], room["name"], room["color"], x, y,
                     len(room.get("members", []))
