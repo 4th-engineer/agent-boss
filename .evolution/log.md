@@ -39,4 +39,4 @@
 | 2026-05-11 | AgentBoss | terminal.py: 移除未使用的 `Property` + `QRectF` 导入（PySide6.QtCore）— 死代码清理 | 低：模块加载微优化 |
 | 2026-05-11 | AgentBoss | main.py: 修正 docstring 从 `agentstudio` 为 `Agent Boss` — 项目名一致性 | 低：文档修复 |
 
-| 2026-05-11 | AgentBoss | toolbar.py: 添加  — 统一项目日志规范，Toolbar 是唯一缺少 logger 的模块 | 低：代码一致性，所有核心模块现在都有结构化日志 |
+| 2026-05-11 | AgentBoss | process_manager.py PtyProcess.read/write/resize: exc_info=e → exc_info=True — adds full traceback to error logs instead of just string repr | 中：生产环境调试能力提升，异常现在有完整堆栈可追溯 |
