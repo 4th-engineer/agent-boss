@@ -40,6 +40,7 @@
 | 2026-05-11 | AgentBoss | main.py: 修正 docstring 从 `agentstudio` 为 `Agent Boss` — 项目名一致性 | 低：文档修复 |
 
 | 2026-05-11 | AgentBoss | process_manager.py PtyProcess.read/write/resize: exc_info=e → exc_info=True — adds full traceback to error logs instead of just string repr | 中：生产环境调试能力提升，异常现在有完整堆栈可追溯 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — replace bare `pass` with `logger.debug` in waitpid; aligns with os.kill+logger.debug pattern 4 lines above, full traceback in debug mode | 低：waitpid 静默 pass → 有日志可追溯的生产调试能力 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — remove unused QRectF import (dead code cleanup) | 低：模块加载微优化 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: map_view.py — replace hardcoded 4-room positions with responsive grid layout; fixes room overlap/viewport overflow for 5+ worlds/agents users | 中：Worlds 系统扩展性修复，5+ room 不再重叠溢出 |
 
