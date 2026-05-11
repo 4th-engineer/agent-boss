@@ -47,7 +47,7 @@
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — add logging.warning when _send_command is called with no agent set; silences zero-feedback command discard in Phase 4 worlds panel | 低：命令发送失败有日志可追溯，_agent_id 未设置时不再静默丢弃 |
 
 
-| 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — fix exc_info=e → exc_info=True in PtyProcess.close() winpty branch; aligns with write/read/resize which already use exc_info=True; ensures full traceback in production error logs | 中：生产环境调试能力提升，winpty kill 异常现在有完整堆栈可追溯 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: tabs.py — add exc_info=True to create_tab error log + replace bare `pass` with logger.warning in cleanup path; all cleanup failures now traceable in production | 低：tab 创建失败后 cleanup 异常不再静默吞掉 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add missing QHBoxLayout import (fixes runtime NameError) | 高：WorldsPanel 实例化时不再报 NameError: "QHBoxLayout" 未定义，Phase 4 系统激活不再崩溃 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: terminal.py — remove dead _setup_avatar stub; AvatarOverlay already instantiated in _setup_ui, stub was a no-op placeholder adding noise and potential confusion | 低：死代码清除，TerminalWidget 初始化路径简化 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: tabs.py — 2 bare `except Exception: pass` in create_tab cleanup path now log full traceback with exc_info=True; aligns with project error-logging standard (其他模块已统一) | 低：cleanup 失败从此有日志追溯，不再静默吞异常 |
