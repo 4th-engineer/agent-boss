@@ -1,6 +1,9 @@
 """Entry point for boss command."""
+import logging
 import sys
 import argparse
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -16,10 +19,18 @@ def main():
         app.setStyle("Fusion")
         window = MainWindow()
         window.show()
-        sys.exit(app.exec())
+        exit_code = app.exec()
+        logger.info("Agent Boss shutdown complete (exit_code=%d)", exit_code)
+        sys.exit(exit_code)
     else:
         parser.print_help()
 
 
 if __name__ == "__main__":
-    main()
+    # Top-level handler: catch any otherwise-uncaught exception from the Qt
+    # event loop and log it before termination so it is not silently lost.
+    try:
+        main()
+    except Exception:
+        logger.critical("Uncaught exception during startup — aborting", exc_info=True)
+        sys.exit(1)

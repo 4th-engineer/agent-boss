@@ -1,7 +1,10 @@
 """Main entry point for Agent Boss."""
+import logging
 import sys
 from PySide6.QtWidgets import QApplication
 from .window import MainWindow
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -11,8 +14,7 @@ def main():
     window = MainWindow()
     window.show()
 
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
+    exit_code = app.exec()
+    # Qt event loop exited — log clean exit for observability
+    logger.info("Agent Boss shutdown complete (exit_code=%d)", exit_code)
+    sys.exit(exit_code)
