@@ -37,12 +37,12 @@ class PtyProcess:
             try:
                 self._winpty_process.write(data)
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess write error", exc_info=True)
+                logger.error("PtyProcess write error: %s", e, exc_info=True)
         elif self._master_fd is not None:
             try:
                 os.write(self._master_fd, data.encode("utf-8"))
             except OSError as e:
-                logger.error("PtyProcess write error", exc_info=True)
+                logger.error("PtyProcess write error: %s", e, exc_info=True)
 
     def read(self) -> str:
         if self._closed:
@@ -51,13 +51,13 @@ class PtyProcess:
             try:
                 return self._winpty_process.read()
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess read error (winpty)", exc_info=True)
+                logger.error("PtyProcess read error (winpty): %s", e, exc_info=True)
                 return ""
         elif self._master_fd is not None:
             try:
                 return os.read(self._master_fd, 65536).decode("utf-8", errors="replace")
             except OSError as e:
-                logger.error("PtyProcess read error", exc_info=True)
+                logger.error("PtyProcess read error: %s", e, exc_info=True)
                 return ""
         return ""
 
@@ -66,12 +66,12 @@ class PtyProcess:
             try:
                 self._winpty_process.set_size(cols, rows)
             except (OSError, ValueError, TypeError) as e:
-                logger.error("PtyProcess resize error", exc_info=True)
+                logger.error("PtyProcess resize error: %s", e, exc_info=True)
         elif self._master_fd is not None:
             try:
                 fcntl.ioctl(self._master_fd, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
             except OSError as e:
-                logger.error("PtyProcess resize error", exc_info=True)
+                logger.error("PtyProcess resize error: %s", e, exc_info=True)
 
     def close(self):
         self._closed = True
@@ -124,7 +124,7 @@ class ProcessManager:
             else:
                 return self._create_unix_process(tab_id, rows, cols)
         except (OSError, ValueError) as e:
-            logger.error("Failed to create PTY process", exc_info=True)
+            logger.error("Failed to create PTY process: %s", e, exc_info=True)
             return None
 
     def _create_unix_process(self, tab_id: str, rows: int, cols: int):
@@ -171,7 +171,7 @@ class ProcessManager:
             self._processes[tab_id] = process
             return process
         except (OSError, ValueError) as e:
-            logger.error("Failed to create winpty process", exc_info=True)
+            logger.error("Failed to create winpty process: %s", e, exc_info=True)
             return None
 
     def get_process(self, tab_id: str):
