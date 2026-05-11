@@ -58,3 +58,5 @@
 
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: database.py — add exc_info=True to all error logs (3 sites); aligns with process_manager.py standard, full traceback now available for DB init/open failures | 中：生产环境 DB 异常追溯能力，堆栈信息完整 |
 | 2026-05-11 | AgentBoss | 🤖 Self-evolution: room_manager.py — add exc_info=True to 2 warning logs (aligns with project standard) | 低：Worlds 系统 I/O 错误现在有完整 traceback，与 process_manager/database/tabs 统一异常追溯规范 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: agent_detail.py — add logging.warning when _quick_cmd is called with no agent selected; silences zero-feedback command discard in worlds panel | 低：Worlds Panel 快速命令无 agent 时不再静默丢弃，日志可追溯 |
+| 2026-05-11 | AgentBoss | 🤖 Self-evolution: process_manager.py — clarify slave_fd close comment in _create_unix_process; parent closes its copy after child dups it — clarifies existing fd-management intent, no functional change | 低：代码可读性提升，slave_fd 关闭语义明确 |

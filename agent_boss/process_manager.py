@@ -148,7 +148,7 @@ class ProcessManager:
                 os._exit(1)
 
         # Parent process
-        os.close(slave_fd)
+        os.close(slave_fd)  # child duped it; close parent's copy to avoid fd leak
         flags = fcntl.fcntl(master_fd, fcntl.F_GETFL)
         fcntl.fcntl(master_fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
