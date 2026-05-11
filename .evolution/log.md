@@ -75,4 +75,4 @@
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — add exc_info=True to avatar load failure log; aligns with project-wide exception-logging standard (process_manager/database/tabs/window 全部已统一)，avatar 加载失败现在有完整 traceback 可追溯 | 低：avatar_selector 异常追溯规范与项目其余模块对齐 |
 
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py — flatten PtyReader.run() dual-branch duplication; `if master_fd → select()` else → winpty poll; eliminates 21-line redundant code path for non-Linux/macOS Unix platforms | 中：代码去重 + 逻辑简化，reader 线程控制流更清晰 |
-|
+|| 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add explicit guards for missing rooms / empty member lists; silent no-op replaced with WARNING logs + panel clear | 低：Worlds Panel 选择空房间或无效房间时不再静默无响应，日志可见 |

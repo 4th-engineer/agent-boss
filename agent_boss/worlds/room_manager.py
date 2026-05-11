@@ -98,21 +98,27 @@ class RoomManager:
         """Delete a room. Agents move to main."""
         if room_id == "main":
             return False
-        if room_id in self._rooms:
-            # Ensure main room exists
-            if "main" not in self._rooms:
-                self._rooms["main"] = Room("main", "Main Hall", "Default room", "#007ACC")
-            # Move agents to main (avoid duplicates)
-            for agent_id in self._rooms[room_id].members:
-                if agent_id not in self._rooms["main"].members:
-                    self._rooms["main"].members.append(agent_id)
-                    self._agents[agent_id] = "main"
-            del self._rooms[room_id]
-            self._save_rooms()
-            logger.info("Room deleted: %s — agents migrated to main", room_id)
-            return True
-        logger.warning("delete_room: room %s not found", room_id)
-        return False
+        if room_id not in self._rooms:
+            logger.warning("delete_room: room %s not found", room_id)
+            return False
+
+        # Ensure main room exists
+        if "main" not in self._rooms:
+            self._rooms["main"] = Room("main", "Main Hall", "Default room", "#007ACC")
+
+        # Migrate agents to main: update _agents mapping AND clear members list
+        deleted_room = self._rooms[room_id]
+        for agent_id in deleted_room.members:
+            self._agents[agent_id] = "main"
+            if agent_id not in self._rooms["main"].members:
+                self._rooms["main"].members.append(agent_id)
+
+        deleted_room.members.clear()  # Prevent stale data if room is ever re-created
+
+        del self._rooms[room_id]
+        self._save_rooms()
+        logger.info("Room deleted: %s — %d agent(s) migrated to main", room_id, len(self._rooms["main"].members))
+        return True
 
     def assign_agent(self, agent_id: str, room_id: str) -> bool:
         """Assign an agent to a room."""
