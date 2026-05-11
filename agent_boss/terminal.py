@@ -289,7 +289,7 @@ class TerminalWidget(QWidget):
                                 try:
                                     color_idx = int(codes[i])
                                 except ValueError:
-                                    logger.warning("ANSI parser: malformed 256-color foreground code %r at pos %d", codes[i], i)
+                                    logger.warning("ANSI parser: malformed 256-color foreground code %r at pos %d", codes[i], i, exc_info=True)
                                     i += 1
                                     continue
                                 if 0 <= color_idx < len(_xterm256):
@@ -299,11 +299,11 @@ class TerminalWidget(QWidget):
                                 try:
                                     r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
                                 except ValueError:
-                                    logger.warning("ANSI parser: malformed 24-bit foreground RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
+                                    logger.warning("ANSI parser: malformed 24-bit foreground RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i, exc_info=True)
                                     i += 3
                                     continue
                                 if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
-                                    logger.warning("ANSI parser: 24-bit foreground RGB out of range (%d,%d,%d) at pos %d", r, g, b, i)
+                                    logger.warning("ANSI parser: 24-bit foreground RGB out of range (%d,%d,%d) at pos %d", r, g, b, i, exc_info=True)
                                     i += 3
                                     continue
                                 i += 3
@@ -317,7 +317,7 @@ class TerminalWidget(QWidget):
                                 try:
                                     color_idx = int(codes[i])
                                 except ValueError:
-                                    logger.warning("ANSI parser: malformed 256-color background code %r at pos %d", codes[i], i)
+                                    logger.warning("ANSI parser: malformed 256-color background code %r at pos %d", codes[i], i, exc_info=True)
                                     i += 1
                                     continue
                                 if 0 <= color_idx < len(_xterm256):
@@ -327,11 +327,11 @@ class TerminalWidget(QWidget):
                                 try:
                                     r, g, b = int(codes[i]), int(codes[i + 1]), int(codes[i + 2])
                                 except ValueError:
-                                    logger.warning("ANSI parser: malformed 24-bit background RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i)
+                                    logger.warning("ANSI parser: malformed 24-bit background RGB %r/%r/%r at pos %d", codes[i], codes[i+1], codes[i+2], i, exc_info=True)
                                     i += 3
                                     continue
                                 if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
-                                    logger.warning("ANSI parser: 24-bit background RGB out of range (%d,%d,%d) at pos %d", r, g, b, i)
+                                    logger.warning("ANSI parser: 24-bit background RGB out of range (%d,%d,%d) at pos %d", r, g, b, i, exc_info=True)
                                     i += 3
                                     continue
                                 i += 3
