@@ -40,3 +40,5 @@
 | 2026-05-11 | AgentBoss | main.py: 修正 docstring 从 `agentstudio` 为 `Agent Boss` — 项目名一致性 | 低：文档修复 |
 
 | 2026-05-11 | AgentBoss | process_manager.py PtyProcess.read/write/resize: exc_info=e → exc_info=True — adds full traceback to error logs instead of just string repr | 中：生产环境调试能力提升，异常现在有完整堆栈可追溯 |
+| 2026-05-11 | AgentBoss | main.py + __main__.py: add top-level Exception handler + logger; catches Qt event loop crashes that would otherwise silently terminate — logs critical with full traceback before exit | 高：启动/运行时异常不再静默消失；新增优雅关闭日志（exit_code 可追溯） |
+
