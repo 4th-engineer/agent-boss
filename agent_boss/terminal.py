@@ -59,6 +59,9 @@ _BRIGHT_BG: dict[str, str] = {
     "104": "#6CB6FF", "105": "#D397EE", "106": "#8BD9CA", "107": "#FFFFFF",
 }
 
+# Pre-compiled: ANSI SGR escape sequence splitter — hot path, called on every PTY output batch
+_ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*m")
+
 
 class PtyReader(QThread):
     """Reads PTY output in background thread."""
@@ -202,7 +205,7 @@ class TerminalWidget(QWidget):
         """Parse ANSI escape sequences and insert styled text."""
         default_format = QTextCharFormat()
         default_format.setForeground(QColor("#D4D4D4"))
-        parts = re.split(r"(\x1b\[[0-9;]*m)", text)
+        parts = _ANSI_ESCAPE_RE.split(text)
         current_format = QTextCharFormat(default_format)
 
         for part in parts:
