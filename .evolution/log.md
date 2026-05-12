@@ -23,8 +23,8 @@
 | 2026-05-11 | AgentBoss  | terminal.py: ANSI 256-color parser — add ValueError guard + bounds check for color index before _xterm256 lookup; prevents IndexError from malformed escape sequences (e.g. \x1b[38;5;999m) | 中：防终端输出非法颜色代码导致 Qt 事件循环崩溃 |
 
 
-|| 2026-05-12 | AgentBoss | terminal.py: add _BRIGHT_BG dict (SGR 100-107) + parser branch for bright background ANSI codes — fixes color leaks in themes/tools using bright bg | 中：修复亮色背景被静默忽略问题，终端配色更完整 |
-|| 2026-05-11 | AgentBoss | avatar_selector.py: add logger + graceful list_avatars() failure — previously avatars dir corruption/missing silently produced empty grid with zero visibility | 低：头像选择器健壮性，错误日志化 |
+| | 2026-05-12 | AgentBoss | terminal.py: add _BRIGHT_BG dict (SGR 100-107) + parser branch for bright background ANSI codes — fixes color leaks in themes/tools using bright bg | 中：修复亮色背景被静默忽略问题，终端配色更完整 |
+| | 2026-05-11 | AgentBoss | avatar_selector.py: add logger + graceful list_avatars() failure — previously avatars dir corruption/missing silently produced empty grid with zero visibility | 低：头像选择器健壮性，错误日志化 |
 | 2026-05-11 | AgentBoss | tabs.py close_all_tabs: 添加 try/except + iteration guard — 防止 _on_tab_close 异常导致无限循环；之前无保护 | 中：关闭所有标签时防止应用冻结 |
 | 2026-05-11 | AgentBoss | terminal.py: remove super().cleanup() — QWidget has no cleanup() method, every tab close raised AttributeError (被 tabs.py try/except 掩盖) | 中：修复每次关闭标签时的异常泄漏 |
 | 2026-05-11 | AgentBoss | terminal.py: PtyReader winpty 分支注释澄清 msleep(50) 的作用是防止 CPU 空转，与 Linux 分支 selector.select 行为对齐 | 中：Windows PTY 性能优化 |
@@ -75,13 +75,14 @@
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — add exc_info=True to avatar load failure log; aligns with project-wide exception-logging standard (process_manager/database/tabs/window 全部已统一)，avatar 加载失败现在有完整 traceback 可追溯 | 低：avatar_selector 异常追溯规范与项目其余模块对齐 |
 
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py — flatten PtyReader.run() dual-branch duplication; `if master_fd → select()` else → winpty poll; eliminates 21-line redundant code path for non-Linux/macOS Unix platforms | 中：代码去重 + 逻辑简化，reader 线程控制流更清晰 |
-|| 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add explicit guards for missing rooms / empty member lists; silent no-op replaced with WARNING logs + panel clear | 低：Worlds Panel 选择空房间或无效房间时不再静默无响应，日志可见 |
+| | 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — add explicit guards for missing rooms / empty member lists; silent no-op replaced with WARNING logs + panel clear | 低：Worlds Panel 选择空房间或无效房间时不再静默无响应，日志可见 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: room_manager.py — fix delete_room stale-agent bug; migrated agents now always update _agents mapping + deleted room members list cleared + logger.info reports migration count | 中：修复删除房间后 agent 数据不一致问题，_agents mapping 总被更新，被删房间 members 列表清空防止脏数据 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: agent_detail.py — add UI feedback when no agent selected; _send_command and _quick_cmd now display visible history messages + update status label instead of silent discard + log-only | 低：Worlds Panel 用户体验，无 agent 时操作不再静默失败 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: theme.py — narrow ValueError → json.JSONDecodeError in _load_themes; aligns with avatar_overlay/avatar_selector/room_manager exception spec across the project | 低：JSON 解析异常规范统一，项目异常处理更精确 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py — pre-compile ANSI SGR regex at module load; _parse_and_insert hot-path now O(1) cached lookup instead of re-compiling `re.split()` on every PTY output batch | 中：终端输出渲染性能提升，高频路径消除重复正则编译开销 |
-| 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — narrow bare `except Exception` → `(OSError, json.JSONDecodeError)`, consistent with project exception-handling standard (avatar_overlay/database/room_manager already use specific types); removes spurious %s interpolation | 低：异常处理规范统一，list_avatars() 不会抛其他类型，代码更精确 |
-| 2026-05-12 | AgentBoss | 🤖 Self-evolution: process_manager.py — add pid+exception to debug log (last site missing %s) | 低：PtyProcess.close() os.kill 异常处理日志现在输出 pid+异常内容，与项目其余 9 处对齐 |
-| 2026-05-12 | AgentBoss | avatar_selector.py: add missing `import json` — exception handler referenced `json.JSONDecodeError` but json was never imported; would trigger NameError instead of graceful empty-grid fallback | 高：Avatar 选择器打开时 avatars.json 损坏不再崩溃，改为空网格降级 |
+| | 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — narrow bare `except Exception` → `(OSError, json.JSONDecodeError)`, consistent with project exception-handling standard (avatar_overlay/database/room_manager already use specific types); removes spurious %s interpolation | 低：异常处理规范统一，list_avatars() 不会抛其他类型，代码更精确 |
+| | 2026-05-12 | AgentBoss | 🤖 Self-evolution: process_manager.py — add pid+exception to debug log (last site missing %s) | 低：PtyProcess.close() os.kill 异常处理日志现在输出 pid+异常内容，与项目其余 9 处对齐 |
+| | 2026-05-12 | AgentBoss | avatar_selector.py: add missing `import json` — exception handler referenced `json.JSONDecodeError` but json was never imported; would trigger NameError instead of graceful empty-grid fallback | 高：Avatar 选择器打开时 avatars.json 损坏不再崩溃，改为空网格降级 |
+| | 2026-05-12 | AgentBoss | 🤖 Self-evolution: window.py — wrap create_tab in _on_new_tab with try/except + warning; uncaught DB/process exceptions now visible instead of silently propagating into Qt event loop | 低：新建标签页时 DB/进程异常不再静默泄漏，用户看到错误状态栏反馈，完整 traceback 写入日志 |
 
 
