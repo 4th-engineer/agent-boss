@@ -413,7 +413,7 @@ class TerminalWidget(QWidget):
                 self._reader.terminate()
                 # Ensure thread terminates after forceful termination
                 if not self._reader.wait(500):
-                    logger.warning("PtyReader thread did not terminate cleanly")
+                    logger.warning("PtyReader thread did not terminate cleanly", exc_info=True)
             self._reader.deleteLater()
             del self._reader
         if self._process:
