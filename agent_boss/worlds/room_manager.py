@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 class Room:
     """Represents a room/group for agents."""
 
-    def __init__(self, id: str, name: str, description: str, color: str):
-        self.id = id
+    def __init__(self, room_id: str, name: str, description: str, color: str):
+        self.room_id = room_id
         self.name = name
         self.description = description
         self.color = color
@@ -19,7 +19,7 @@ class Room:
 
     def to_dict(self) -> dict:
         return {
-            "id": self.id,
+            "id": self.room_id,
             "name": self.name,
             "description": self.description,
             "color": self.color,
@@ -55,10 +55,10 @@ class RoomManager:
                     data = json.load(f)
                     for room_data in data.values():
                         room = Room.from_dict(room_data)
-                        self._rooms[room.id] = room
+                        self._rooms[room.room_id] = room
                         # Rebuild agent->room mapping
                         for member in room.members:
-                            self._agents[member] = room.id
+                            self._agents[member] = room.room_id
             except (OSError, json.JSONDecodeError) as e:
                 logger.warning("Failed to load rooms from %s: %s — using empty room list", path, e, exc_info=True)
 

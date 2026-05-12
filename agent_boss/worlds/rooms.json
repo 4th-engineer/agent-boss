@@ -26,5 +26,12 @@
     "description": "Infrastructure and deployment agents",
     "color": "#9C27B0",
     "members": []
+  },
+  "hello": {
+    "id": "hello",
+    "name": "hello",
+    "description": "Hello World",
+    "color": "#00FF00",
+    "members": []
   }
 }
