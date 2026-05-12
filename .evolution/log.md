@@ -88,3 +88,4 @@
 
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: database.py — add return type hints update_session (-> None) + get_all_sessions (-> list[sqlite3.Row]); aligns with project typing standard across database/room_manager/task_system modules | 低：DB 层类型安全提升，调用者知道函数返回值类型而非隐式 Any |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — remove spurious warning for valid empty rooms; empty members list is normal state, not an error condition | 低：删除误报，空房间（如新建房间）不再触发 WARNING 日志 |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: terminal.py — replace 12-branch if/elif key dispatch with O(1) dict lookup; _KEY_ESCAPE map eliminates 45-line chain in eventFilter, keys are now O(1) hash lookup vs O(n) linear branch; same behavior preserved, is_closed guard unchanged | 中：代码可维护性显著提升，终端按键处理路径缩短；O(1) 查找替代线性分支，逻辑更清晰 |
