@@ -23,7 +23,8 @@
 | 2026-05-11 | AgentBoss  | terminal.py: ANSI 256-color parser — add ValueError guard + bounds check for color index before _xterm256 lookup; prevents IndexError from malformed escape sequences (e.g. \x1b[38;5;999m) | 中：防终端输出非法颜色代码导致 Qt 事件循环崩溃 |
 
 
-| | 2026-05-12 | AgentBoss | terminal.py: add _BRIGHT_BG dict (SGR 100-107) + parser branch for bright background ANSI codes — fixes color leaks in themes/tools using bright bg | 中：修复亮色背景被静默忽略问题，终端配色更完整 |
+| 2026-05-12 | 🤖 Self-evolution: terminal.py PtyReader cleanup — add exc_info=True to "thread did not terminate cleanly" warning; all other ~40 exception sites already use exc_info=True, this was the last site without traceback in cleanup path | 低：PtyReader 线程挂死时现在有完整堆栈可追溯，对齐项目异常日志规范 |
+| 2026-05-12 | 🤖 Self-evolution: terminal.py — add _BRIGHT_BG dict (SGR 100-107) + parser branch for bright background ANSI codes — fixes color leaks in themes/tools using bright bg | 中：修复亮色背景被静默忽略问题，终端配色更完整 |
 | | 2026-05-11 | AgentBoss | avatar_selector.py: add logger + graceful list_avatars() failure — previously avatars dir corruption/missing silently produced empty grid with zero visibility | 低：头像选择器健壮性，错误日志化 |
 | 2026-05-11 | AgentBoss | tabs.py close_all_tabs: 添加 try/except + iteration guard — 防止 _on_tab_close 异常导致无限循环；之前无保护 | 中：关闭所有标签时防止应用冻结 |
 | 2026-05-11 | AgentBoss | terminal.py: remove super().cleanup() — QWidget has no cleanup() method, every tab close raised AttributeError (被 tabs.py try/except 掩盖) | 中：修复每次关闭标签时的异常泄漏 |
