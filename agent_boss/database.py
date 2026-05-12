@@ -77,7 +77,7 @@ def create_session(title: str = "PowerShell", working_dir: Optional[str] = None)
     return tab_id
 
 
-def update_session(tab_id: str, title: Optional[str] = None, working_dir: Optional[str] = None):
+def update_session(tab_id: str, title: Optional[str] = None, working_dir: Optional[str] = None) -> None:
     if title is None and working_dir is None:
         return
     with get_connection() as conn:
@@ -95,7 +95,7 @@ def remove_session(tab_id: str):
         conn.execute("DELETE FROM sessions WHERE tab_id = ?", (tab_id,))
 
 
-def get_all_sessions() -> list:
+def get_all_sessions() -> list[sqlite3.Row]:
     with get_connection() as conn:
         return conn.execute(
             "SELECT * FROM sessions ORDER BY last_active_at DESC"
