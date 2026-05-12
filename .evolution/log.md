@@ -2,7 +2,7 @@
 
 | Date       | Project    | Description                                        | Impact          |
 |------------|------------|----------------------------------------------------|-----------------|
-| 2026-05-10 | AgentBoss  | process_manager.py: shrink 2x bare Exception → (OSError, ValueError) in create_process/_create_windows_process | 中：统一项目异常处理规范，防静默吞掉非预期错误 |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: room_manager.py — rename Room.id → Room.room_id; eliminates builtin `id()` shadowing (Python best practice: no single-letter or builtin names for function arguments/attributes); all call sites updated (to_dict/from_dict/_load_rooms/create_room/delete_room) | 低：代码质量提升，Python 惯例一致性，避免潜在命名空间冲突 |
 | 2026-05-10 | AgentBoss  | avatar_overlay.py: narrow _load_avatar bare Exception → (OSError, json.JSONDecodeError) | 低：缩小异常范围，防止意外被吞 |
 | 2026-05-10 | AgentBoss  | room_manager.py wraps _load_rooms and _save_rooms with try/except + logging.warning — handles corrupted rooms.json gracefully | 中：防止 worlds 系统崩溃 |
 | 2026-05-10 | AgentBoss  | 替换 terminal.py 中 3 处 print() 为 logging.warning | 中：PTY 错误处理日志化 |
