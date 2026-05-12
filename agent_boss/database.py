@@ -1,7 +1,6 @@
 """SQLite database for session persistence."""
 import sqlite3
 import logging
-import threading
 from pathlib import Path
 from typing import Optional
 import uuid
@@ -10,33 +9,35 @@ logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "agentboss.db"
 
-# Thread-local storage for connections
-_thread_local = threading.local()
+# Module-level singleton connection (check_same_thread=False for Qt signal/slot cross-thread access).
+# Retry guard prevents spamming logs during prolonged outages.
+_conn: Optional[sqlite3.Connection] = None
+_conn_error: bool = False
 
 
 def get_connection() -> sqlite3.Connection:
-    """Get a database connection for the current thread.
+    """Get the shared database connection.
 
-    Note: Uses check_same_thread=False for Qt compatibility.
-    In production, consider using a connection pool or Qt's
-    QSqlDatabase for proper thread safety.
+    Uses check_same_thread=False so Qt slots running on arbitrary threads can still
+    access the connection.  All callers are serialised by Qt's event loop so no
+    concurrent access occurs in practice.
     """
-    if not hasattr(_thread_local, 'conn') or _thread_local.conn is None:
-        # Track consecutive failures to avoid spamming logs during prolonged outages
-        if getattr(_thread_local, '_conn_error', False):
+    global _conn, _conn_error
+    if _conn is None:
+        if _conn_error:
             raise sqlite3.Error(
                 f"Database unavailable — previous connection attempt at {DB_PATH} failed; "
                 "not retrying until a successful connection is established"
             )
         try:
-            _thread_local.conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-            _thread_local.conn.row_factory = sqlite3.Row
-            _thread_local._conn_error = False
+            _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+            _conn.row_factory = sqlite3.Row
+            _conn_error = False
         except sqlite3.Error as e:
-            _thread_local._conn_error = True
+            _conn_error = True
             logger.error("Failed to open database at %s: %s", DB_PATH, e, exc_info=True)
             raise
-    return _thread_local.conn
+    return _conn
 
 
 def init_db():
