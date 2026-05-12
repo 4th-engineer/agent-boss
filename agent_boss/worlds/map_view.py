@@ -40,10 +40,9 @@ class RoomItem(QGraphicsRectItem):
 class AgentNode(QGraphicsRectItem):
     """Graphics item representing an agent in a room."""
 
-    def __init__(self, agent_id: str, avatar: str, parent=None):
+    def __init__(self, agent_id: str, parent=None):
         super().__init__(parent)
         self.agent_id = agent_id
-        self.avatar = avatar
 
         self.setBrush(QBrush(QColor("#607D8B")))
         self.setPen(QPen(QColor("#455A64"), 1))
@@ -100,7 +99,7 @@ class MapView(QGraphicsView):
 
         # Position within room
         member_count = len([a for a in self._agent_rooms.values() if a == room_id])
-        agent = AgentNode(agent_id, avatar)
+        agent = AgentNode(agent_id)
         agent.setRect(room_rect.x() + 20 + (member_count % 3) * 40, room_rect.y() + 30 + (member_count // 3) * 40, 35, 35)
         self._scene.addItem(agent)
         self._agent_items[agent_id] = agent
