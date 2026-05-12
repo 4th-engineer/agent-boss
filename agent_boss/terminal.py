@@ -62,6 +62,25 @@ _BRIGHT_BG: dict[str, str] = {
 # Pre-compiled: ANSI SGR escape sequence splitter — hot path, called on every PTY output batch
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*m")
 
+# ── Key → ANSI escape sequence map for TerminalWidget.eventFilter ───────────
+# Used for single-key sequences (arrows, function rows, editing keys).
+# Guard (`_process.is_closed`) is checked before this dict is consulted.
+_KEY_ESCAPE: dict[int, str] = {
+    Qt.Key_Return:    "\n",
+    Qt.Key_Backspace: "\x7f",
+    Qt.Key_Tab:       "\t",
+    Qt.Key_Delete:    "\x1b[3~",
+    Qt.Key_Escape:    "\x1b",
+    Qt.Key_Up:        "\x1b[A",
+    Qt.Key_Down:      "\x1b[B",
+    Qt.Key_Right:     "\x1b[C",
+    Qt.Key_Left:      "\x1b[D",
+    Qt.Key_Home:      "\x1b[H",
+    Qt.Key_End:       "\x1b[F",
+    Qt.Key_PageUp:    "\x1b[5~",
+    Qt.Key_PageDown:  "\x1b[6~",
+}
+
 
 class PtyReader(QThread):
     """Reads PTY output in background thread."""
@@ -361,51 +380,6 @@ class TerminalWidget(QWidget):
                         self._process.write(text)
                 return True
 
-            # ── Escape sequences for navigation / editing ─────────────────────
-            elif key == Qt.Key_Return:
-                self._process.write("\n")
-                return True
-            elif key == Qt.Key_Backspace:
-                self._process.write("\x7f")
-                return True
-            elif key == Qt.Key_Tab:
-                self._process.write("\t")
-                return True
-            elif key == Qt.Key_Delete:
-                self._process.write("\x1b[3~")
-                return True
-            elif key == Qt.Key_Escape:
-                self._process.write("\x1b")
-                return True
-
-            # ── Arrow keys → ANSI escape sequences ────────────────────────────
-            elif key == Qt.Key_Up:
-                self._process.write("\x1b[A")
-                return True
-            elif key == Qt.Key_Down:
-                self._process.write("\x1b[B")
-                return True
-            elif key == Qt.Key_Right:
-                self._process.write("\x1b[C")
-                return True
-            elif key == Qt.Key_Left:
-                self._process.write("\x1b[D")
-                return True
-
-            # ── Home / End / PageUp / PageDown ────────────────────────────────
-            elif key == Qt.Key_Home:
-                self._process.write("\x1b[H")
-                return True
-            elif key == Qt.Key_End:
-                self._process.write("\x1b[F")
-                return True
-            elif key == Qt.Key_PageUp:
-                self._process.write("\x1b[5~")
-                return True
-            elif key == Qt.Key_PageDown:
-                self._process.write("\x1b[6~")
-                return True
-
             # ── Forward printable characters ───────────────────────────────────
             elif event.text():
                 char = event.text()
@@ -417,6 +391,13 @@ class TerminalWidget(QWidget):
                 if char in ('\x01', '\x02', '\x05', '\x06'):
                     self._process.write(char)
                     return True
+
+            # ── Single-key escape sequences (arrows, editing, function row) ────
+            # O(1) dict lookup replaces 12-branch if/elif chain.
+            escape = _KEY_ESCAPE.get(key)
+            if escape is not None:
+                self._process.write(escape)
+                return True
 
         return super().eventFilter(obj, event)
 
