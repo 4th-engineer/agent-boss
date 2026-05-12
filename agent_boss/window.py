@@ -89,8 +89,12 @@ class MainWindow(QMainWindow):
     def _on_new_tab(self):
         title, ok = QInputDialog.getText(self, "New Terminal", "Tab name:", QLineEdit.Normal, "PowerShell")
         if ok and title:
-            self._tab_manager.create_tab(title=title)
-            self._status_bar.showMessage(f"Created: {title}")
+            try:
+                self._tab_manager.create_tab(title=title)
+                self._status_bar.showMessage(f"Created: {title}")
+            except Exception as e:
+                logger.warning("Failed to create tab %r: %s", title, e, exc_info=True)
+                self._status_bar.showMessage(f"Failed: {title}")
 
     def _apply_theme(self, theme_name: str = None):
         self._theme_manager.apply_theme(self, theme_name)
