@@ -87,3 +87,4 @@
 
 
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: database.py — add return type hints update_session (-> None) + get_all_sessions (-> list[sqlite3.Row]); aligns with project typing standard across database/room_manager/task_system modules | 低：DB 层类型安全提升，调用者知道函数返回值类型而非隐式 Any |
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: worlds_panel.py — remove spurious warning for valid empty rooms; empty members list is normal state, not an error condition | 低：删除误报，空房间（如新建房间）不再触发 WARNING 日志 |
