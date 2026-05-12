@@ -71,7 +71,7 @@ class WorldsPanel(QWidget):
             logger.warning("_on_room_selected: room %s not found", room_id)
             return
         if not room.members:
-            logger.warning("_on_room_selected: room %s has no members — clearing detail panel", room_id)
+            # Empty members list is valid — clear panel without a warning (room exists, just has no agents yet)
             self._detail_panel.set_agent(None, room=room_id)
             return
         self._detail_panel.set_agent(room.members[0], room=room_id)
