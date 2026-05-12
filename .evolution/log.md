@@ -86,3 +86,4 @@
 | | 2026-05-12 | AgentBoss | 🤖 Self-evolution: window.py — wrap create_tab in _on_new_tab with try/except + warning; uncaught DB/process exceptions now visible instead of silently propagating into Qt event loop | 低：新建标签页时 DB/进程异常不再静默泄漏，用户看到错误状态栏反馈，完整 traceback 写入日志 |
 
 
+| 2026-05-12 | AgentBoss | 🤖 Self-evolution: database.py — add return type hints update_session (-> None) + get_all_sessions (-> list[sqlite3.Row]); aligns with project typing standard across database/room_manager/task_system modules | 低：DB 层类型安全提升，调用者知道函数返回值类型而非隐式 Any |
