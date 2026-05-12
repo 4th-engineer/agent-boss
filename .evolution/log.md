@@ -80,6 +80,6 @@
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: agent_detail.py — add UI feedback when no agent selected; _send_command and _quick_cmd now display visible history messages + update status label instead of silent discard + log-only | 低：Worlds Panel 用户体验，无 agent 时操作不再静默失败 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: avatar_selector.py — narrow bare `except Exception` → `(OSError, json.JSONDecodeError)`, consistent with project exception-handling standard (avatar_overlay/database/room_manager already use specific types); removes spurious %s interpolation | 低：异常处理规范统一，list_avatars() 不会抛其他类型，代码更精确 |
 | 2026-05-12 | AgentBoss | 🤖 Self-evolution: process_manager.py — add pid+exception to debug log (last site missing %s) | 低：PtyProcess.close() os.kill 异常处理日志现在输出 pid+异常内容，与项目其余 9 处对齐 |
-| 2026-05-12 | AgentBoss | avatar_selector.py: add `as e` to list_avatars failure handler + include %s in log message — exception value visible without needing to parse exc_info traceback | 低：调试可追溯性，JSON损坏时能直接看到具体错误而非只看堆栈 |
+| 2026-05-12 | AgentBoss | avatar_selector.py: add missing `import json` — exception handler referenced `json.JSONDecodeError` but json was never imported; would trigger NameError instead of graceful empty-grid fallback | 高：Avatar 选择器打开时 avatars.json 损坏不再崩溃，改为空网格降级 |
 
 
