@@ -199,8 +199,15 @@ class MapWidget(QWidget):
                     room["id"], room["name"], room["color"], x, y,
                     len(room.get("members", []))
                 )
-        except Exception as e:
-            logger.error("refresh_map: failed to populate rooms — %s", e, exc_info=True)
+        except RuntimeError as e:
+            # Schema/data corruption — do not silently swallow; propagate so caller
+            # can surface a visible error rather than showing a blank map.
+            logger.critical("refresh_map: room data corrupted — %s", e, exc_info=True)
+            raise
+        except (OSError, ValueError) as e:
+            # I/O (missing rooms.json) or malformed room data — also propagate.
+            logger.critical("refresh_map: failed to load rooms — %s", e, exc_info=True)
+            raise
 
     def get_map_view(self) -> MapView:
         return self._map_view
