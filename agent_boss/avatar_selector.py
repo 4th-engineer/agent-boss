@@ -1,4 +1,5 @@
 """Avatar selector dialog."""
+import json
 import logging
 
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QPushButton, QLabel, QScrollArea, QWidget
